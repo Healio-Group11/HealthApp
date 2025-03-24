@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "145589952217",
+    "project_id": "healioproject-78c1d",
+    "storage_bucket": "healioproject-78c1d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145589952217:android:48aee00e298bf6699ae8c8",
+        "android_client_info": {
+          "package_name": "com.example.healiohealthapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoTrvIn8OC8FuqHbOb5qPmAPlK8U-qA7I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
