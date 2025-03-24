@@ -1,6 +1,6 @@
 [versions]
-agp = "8.8.0"
-firebaseBom = "33.10.0"
+agp = "8.8.2"
+firebaseBom = "33.11.0"
 hilt = "2.51"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
@@ -9,9 +9,10 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-composeBom = "2024.04.01"
+composeBom = "2025.03.00"
 navigationComposeVersion = "2.8.9"
 coil = "2.6.0" # Added for uploading pictures
+hiltNavigationCompose = "1.2.0" # Lisätty Hiltin Compose-integraatiolle
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -22,6 +23,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" } # Lisätty
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
