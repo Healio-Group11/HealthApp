@@ -24,7 +24,7 @@ fun HealioNavigation() {
     val homeScreenViewModel: HomeScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     // TODO: change starting point. If user is logged in, start from homepage. If not, start from starting screen.
-    // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen
+    // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen.
     NavHost(
         navController = navController,
         startDestination = Routes.HOME // change HOME to START!
