@@ -2,6 +2,7 @@ package com.example.healiohealthapplication.ui.screens.medicine
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import com.example.healiohealthapplication.data.Medicine
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun MedicineScreen(navController: NavController, modifier: Modifier) {
@@ -84,7 +88,7 @@ fun MedicineScreen(navController: NavController, modifier: Modifier) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                MedicineList()
+                MedicineListContent(navController)
             }
         }
     }
@@ -92,11 +96,11 @@ fun MedicineScreen(navController: NavController, modifier: Modifier) {
 
 
 @Composable
-fun MedicineList() {
+fun MedicineListContent(navController: NavController) {
     val medicines = listOf(
-        "Burana - After meal",
-        "Vitamin C - Morning",
-        "Painkiller - If needed"
+        Medicine("Burana", "Pain reliever", "After meal", "2 pills/day", "3 months"),
+        Medicine("Vitamin C", "Immune booster", "Morning", "1 pill/day", "1 month"),
+        Medicine("Painkiller", "For headache", "If needed", "1 pill", "As required")
     )
 
     Column {
@@ -106,6 +110,17 @@ fun MedicineList() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
+                    .clickable {
+                        // Encode all parameters before passing them to the navigation
+                        val name = URLEncoder.encode(medicine.name, StandardCharsets.UTF_8.toString())
+                        val description = URLEncoder.encode(medicine.description, StandardCharsets.UTF_8.toString())
+                        val schedule = URLEncoder.encode(medicine.schedule, StandardCharsets.UTF_8.toString())
+                        val amount = URLEncoder.encode(medicine.amount, StandardCharsets.UTF_8.toString())
+                        val duration = URLEncoder.encode(medicine.duration, StandardCharsets.UTF_8.toString())
+
+                        // Navigate to MedicineDetailScreen with all the parameters
+                        navController.navigate("medicine_detail/$name/$description/$schedule/$amount/$duration")
+                    }
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
@@ -119,9 +134,10 @@ fun MedicineList() {
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(text = medicine, fontSize = 16.sp)
+                    Text(text = medicine.name, fontSize = 16.sp)
                 }
             }
         }
     }
 }
+
