@@ -12,6 +12,7 @@ import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreenViewModel
 import com.example.healiohealthapplication.ui.screens.login.LoginScreen
+import com.example.healiohealthapplication.ui.screens.medicine.AddMedicineScreen
 import com.example.healiohealthapplication.ui.screens.medicine.MedicineDetailScreen
 import com.example.healiohealthapplication.ui.screens.medicine.MedicineListScreenContent
 import com.example.healiohealthapplication.ui.screens.signup.SignUpScreen
@@ -85,6 +86,11 @@ fun HealioNavigation() {
             )
 
             MedicineDetailScreen(name, description, schedule, amount, duration, navController)
+        }
+
+        //adding medicine page
+        composable(route = Routes.ADD_MEDICINE) {
+            AddMedicineScreen(navController)
         }
 
 

@@ -31,7 +31,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import com.example.healiohealthapplication.data.Medicine
+import com.example.healiohealthapplication.navigation.Routes
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -42,10 +46,10 @@ fun MedicineScreen(navController: NavController, modifier: Modifier) {
         bottomBar = { BottomNavBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* Add medicine logic */ },
-                containerColor = Color(0xFF4CAF50)
+                onClick = {navController.navigate(Routes.ADD_MEDICINE)},
+                containerColor = Color(0xFF00796B)
             ) {
-                Text("+", fontSize = 24.sp, color = Color.White)
+                Icon(Icons.Filled.Add, contentDescription = "Add Medicine", tint = Color.White)
             }
         }
     ) { innerPadding ->
