@@ -32,4 +32,24 @@ class FirestoreRepository @Inject constructor() {
                 onResult(false) // returns the callback with false
             }
     }
+
+    fun getUserData(userId: String, onResult: (User?) -> Unit) {
+        db.collection("users")
+            .document(userId) // fetches the document in "users" with the specific userId under which is all this user's information
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(User::class.java)
+                    Log.d("FirestoreRepository", "User data retrieved successfully: $user")
+                    onResult(user) // callback gives the user information if fetching was successful
+                } else {
+                    Log.d("FirestoreRepository", "No user data found")
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirestoreRepository", "Error getting user data", e)
+                onResult(null)
+            }
+    }
 }

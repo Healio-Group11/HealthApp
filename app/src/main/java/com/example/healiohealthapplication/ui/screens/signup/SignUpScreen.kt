@@ -1,5 +1,7 @@
 package com.example.healiohealthapplication.ui.screens.signup
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -21,30 +23,33 @@ fun SignUpScreen(navController: NavController, modifier: Modifier, viewModel: Si
         topBar = { TopNavBar("Sign Up", navController) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
-        Text(
-            text = "Sign Up Screen!",
-            modifier = Modifier.padding(innerPadding)
-        )
-        LoginAndSignUpOutlinedTextField(
-            value = viewModel.currentEmail,
-            onValueChange = { viewModel.currentEmail = it },
-            label = "Email",
-            keyboardType= KeyboardType.Email,
-            leadingIcon = Icons.Filled.Email,
-            iconContentDescription = "description"
-        )
-        LoginAndSignUpOutlinedTextField(
-            value = viewModel.currentPassword,
-            onValueChange = { viewModel.currentPassword = it },
-            label = "Password",
-            keyboardType= KeyboardType.Password,
-            leadingIcon = Icons.Filled.Lock,
-            iconContentDescription = "description"
-        )
-        Button(
-            onClick = { viewModel.register(viewModel.currentEmail, viewModel.currentPassword) }
+        Column(
+            modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
-            Text(text = "Sign Up")
+            Text(
+                text = "Sign Up Screen!",
+            )
+            LoginAndSignUpOutlinedTextField(
+                value = viewModel.currentEmail,
+                onValueChange = { viewModel.currentEmail = it },
+                label = "Email",
+                keyboardType = KeyboardType.Email,
+                leadingIcon = Icons.Filled.Email,
+                iconContentDescription = "description"
+            )
+            LoginAndSignUpOutlinedTextField(
+                value = viewModel.currentPassword,
+                onValueChange = { viewModel.currentPassword = it },
+                label = "Password",
+                keyboardType = KeyboardType.Password,
+                leadingIcon = Icons.Filled.Lock,
+                iconContentDescription = "description"
+            )
+            Button(
+                onClick = { viewModel.register(navController, viewModel.currentEmail, viewModel.currentPassword) }
+            ) {
+                Text(text = "Sign Up")
+            }
         }
     }
 }

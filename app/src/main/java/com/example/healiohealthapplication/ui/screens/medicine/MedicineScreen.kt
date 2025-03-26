@@ -1,6 +1,7 @@
 package com.example.healiohealthapplication.ui.screens.medicine
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,5 +20,10 @@ fun MedicineScreen(navController: NavController, modifier: Modifier) {
             text = "Medicine Screen!",
             modifier = Modifier.padding(innerPadding)
         )
+        Button(
+            onClick = {  }
+        ) {
+            Text(text = "Sign Up")
+        }
     }
 }

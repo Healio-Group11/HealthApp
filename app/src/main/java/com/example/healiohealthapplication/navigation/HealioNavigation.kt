@@ -23,7 +23,6 @@ import com.example.healiohealthapplication.ui.screens.workout.WorkoutScreen
 fun HealioNavigation() {
     val navController = rememberNavController()
     // TODO: are we supposed to declare each viewmodel here separately? is this bad practice?
-    // val homeScreenViewModel: HomeScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     // TODO: change starting point. If user is logged in, start from homepage. If not, start from starting screen.
     // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen.
@@ -38,7 +37,7 @@ fun HealioNavigation() {
         }
         composable(route = Routes.LOGIN) { LoginScreen(navController, modifier = Modifier) }
         composable(route = Routes.SIGNUP) {
-            val signUpViewModel: SignUpViewModel = hiltViewModel() // trying a different way to init the viewmodel
+            val signUpViewModel: SignUpViewModel = hiltViewModel()
             SignUpScreen(navController, modifier = Modifier, signUpViewModel)
         }
         composable(route = Routes.USER) { UserScreen(navController, modifier = Modifier) }

@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HealioHealthApplicationTheme {
-                    HealioNavigation() // problem with hilt
+                    HealioNavigation()
             }
         }
     }
