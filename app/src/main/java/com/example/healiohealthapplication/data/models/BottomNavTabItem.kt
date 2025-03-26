@@ -1,4 +1,4 @@
-package com.example.healiohealthapplication.models
+package com.example.healiohealthapplication.data.models
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
