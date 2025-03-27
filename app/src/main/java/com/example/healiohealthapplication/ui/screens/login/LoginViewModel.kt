@@ -18,30 +18,20 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val firestoreRepository: FirestoreRepository
+    private val firestoreRepository: FirestoreRepository,
 ) : ViewModel() {
-    // -- user data --
-    private val _userData = MutableStateFlow<User?>(null)
-    val userData: StateFlow<User?> = _userData // can be accessed from UI (holds all user info for specific userId)
-
     // -- states for current ui screen --
     var currentEmail by mutableStateOf("")
     var currentPassword by mutableStateOf("")
 
-    fun login(navController: NavController, email: String, password: String) {
+    fun login(navController: NavController, email: String, password: String, onLoginSuccess: (String) -> Unit) {
         authRepository.login(email, password) { success ->
             if (success) {
                 authRepository.getCurrentUserId()?.let { userId ->
-                    fetchUserData(userId)
+                    onLoginSuccess(userId)
                     navController.navigate(Routes.HOME)
                 }
             }
-        }
-    }
-
-    private fun fetchUserData(userId: String) {
-        firestoreRepository.getUserData(userId) { data ->
-            _userData.value = data
         }
     }
 }

@@ -16,6 +16,7 @@ class SharedViewModel @Inject constructor(
     // -- user data --
     private val _userData = MutableStateFlow<User?>(null)
     val userData: StateFlow<User?> = _userData // can be accessed from UI (holds all user info for specific userId)
+    // val userData: userData.collectAsState()
 
     // -- FUNCTIONS --
     fun fetchUserData(userId: String) {

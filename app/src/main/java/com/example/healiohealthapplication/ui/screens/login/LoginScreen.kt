@@ -47,7 +47,11 @@ fun LoginScreen(navController: NavController, modifier: Modifier, viewModel: Log
                 iconContentDescription = "description"
             )
             Button(
-                onClick = { viewModel.login(navController, viewModel.currentEmail, viewModel.currentPassword) }
+                onClick = {
+                    viewModel.login(navController, viewModel.currentEmail, viewModel.currentPassword) { userId ->
+                        sharedViewModel.fetchUserData(userId)
+                    }
+                }
             ) {
                 Text(text = "Log In")
             }
