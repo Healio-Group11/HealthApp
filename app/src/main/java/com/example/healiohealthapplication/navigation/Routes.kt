@@ -12,4 +12,9 @@ object Routes {
     const val WORKOUT = "workout"
     const val MEDICINE = "medicine"
     const val CALENDAR = "calendar"
+
+    // Routes for Medicine Feature
+    const val MEDICINE_LIST = "medicine_list"
+    const val MEDICINE_DETAIL = "medicine_detail"
+    const val ADD_MEDICINE = "add_medicine"
 }
