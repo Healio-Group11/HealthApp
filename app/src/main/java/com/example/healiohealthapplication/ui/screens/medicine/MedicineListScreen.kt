@@ -3,8 +3,6 @@ package com.example.healiohealthapplication.ui.screens.medicine
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,8 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
-import com.example.healiohealthapplication.data.Medicine
-import com.example.healiohealthapplication.navigation.Routes
+import com.example.healiohealthapplication.data.models.Medicine
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 

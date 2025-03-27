@@ -1,4 +1,4 @@
-package com.example.healiohealthapplication.data
+package com.example.healiohealthapplication.data.models
 
 data class Medicine(
     val name: String,

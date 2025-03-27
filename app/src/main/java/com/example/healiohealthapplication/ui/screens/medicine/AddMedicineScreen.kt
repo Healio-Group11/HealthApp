@@ -111,11 +111,11 @@ fun MedicineInputField(label: String, value: TextFieldValue, onValueChange: (Tex
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         textStyle = LocalTextStyle.current.copy(color = Color.White),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        /* colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.White,
             unfocusedBorderColor = Color.Gray,
             cursorColor = Color.White
-        )
+        ) */
     )
 }
 

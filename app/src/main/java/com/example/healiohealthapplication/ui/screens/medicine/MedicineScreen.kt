@@ -34,7 +34,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
-import com.example.healiohealthapplication.data.Medicine
+import com.example.healiohealthapplication.data.models.Medicine
 import com.example.healiohealthapplication.navigation.Routes
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
