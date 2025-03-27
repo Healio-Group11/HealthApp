@@ -31,7 +31,7 @@ fun HealioNavigation() {
     // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen.
     NavHost(
         navController = navController,
-        startDestination = Routes.LOGIN // change HOME to START!
+        startDestination = Routes.HOME // change HOME to START!
     ) {
         composable(route = Routes.START) { StartScreen(navController, modifier = Modifier) }
         composable(route = Routes.HOME) {
@@ -44,7 +44,7 @@ fun HealioNavigation() {
         }
         composable(route = Routes.SIGNUP) {
             val signUpViewModel: SignUpViewModel = hiltViewModel()
-            SignUpScreen(navController, modifier = Modifier, signUpViewModel)
+            SignUpScreen(navController, modifier = Modifier, signUpViewModel, sharedViewModel)
         }
         composable(route = Routes.USER) { UserScreen(navController, modifier = Modifier) }
         composable(route = Routes.DIET) { DietScreen(navController, modifier = Modifier) }

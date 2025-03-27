@@ -16,9 +16,10 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.LoginAndSignUpOutlinedTextField
 import com.example.healiohealthapplication.ui.components.TopNavBar
+import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 
 @Composable
-fun SignUpScreen(navController: NavController, modifier: Modifier, viewModel: SignUpViewModel) {
+fun SignUpScreen(navController: NavController, modifier: Modifier, viewModel: SignUpViewModel, sharedViewModel: SharedViewModel) {
     Scaffold(
         topBar = { TopNavBar("Sign Up", navController) },
         bottomBar = { BottomNavBar(navController) }
@@ -46,7 +47,11 @@ fun SignUpScreen(navController: NavController, modifier: Modifier, viewModel: Si
                 iconContentDescription = "description"
             )
             Button(
-                onClick = { viewModel.register(navController, viewModel.currentEmail, viewModel.currentPassword) }
+                onClick = {
+                    viewModel.register(navController, viewModel.currentEmail, viewModel.currentPassword) { userId ->
+                        sharedViewModel.fetchUserData(userId)
+                    }
+                }
             ) {
                 Text(text = "Sign Up")
             }

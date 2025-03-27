@@ -5,7 +5,7 @@ import com.example.healiohealthapplication.data.models.User
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
-class FirestoreRepository @Inject constructor() {
+class UserRepository @Inject constructor() {
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
