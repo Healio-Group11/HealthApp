@@ -38,7 +38,7 @@ fun HealioNavigation() {
     // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen
     NavHost(
         navController = navController,
-        startDestination = Routes.LOGIN // change HOME to START!
+        startDestination = Routes.START // change HOME to START!
     ) {
         composable(route = Routes.START) { StartScreen(navController, modifier = Modifier) }
         composable(route = Routes.HOME) {
