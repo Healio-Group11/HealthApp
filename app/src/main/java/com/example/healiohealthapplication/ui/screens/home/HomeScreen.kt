@@ -31,10 +31,6 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                 text = "Currently logged in user's email: ${userData?.email ?: "Not logged in"}!"
             )
         }
-        Text(
-            text = "Home Screen!",
-            modifier = Modifier.padding(innerPadding)
-        )
     }
 }
 
