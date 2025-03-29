@@ -24,6 +24,7 @@ import com.example.healiohealthapplication.ui.screens.user.UserScreen
 import com.example.healiohealthapplication.ui.screens.medicine.MedicineScreen
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.screens.signup.SignUpViewModel
+import com.example.healiohealthapplication.ui.screens.welcome.WelcomeScreen
 import com.example.healiohealthapplication.ui.screens.workout.WorkoutScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -59,6 +60,7 @@ fun HealioNavigation() {
         composable(route = Routes.WORKOUT) { WorkoutScreen(navController, modifier = Modifier) }
         composable(route = Routes.MEDICINE) { MedicineScreen(navController, modifier = Modifier) }
         composable(route = Routes.CALENDAR) { CalendarScreen(navController, modifier = Modifier) }
+        composable(route = Routes.WELCOME) { WelcomeScreen(navController, modifier = Modifier) }
 
 
         // Medicine List Screen (Main Page)
