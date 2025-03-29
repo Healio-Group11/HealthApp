@@ -17,11 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
@@ -51,11 +51,11 @@ fun StartScreen(
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
             Text(
                 text = stringResource(id = R.string.stay_fit_stay_healthy),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -66,17 +66,29 @@ fun StartScreen(
             )
         }
 
-        // Rounded decorative element on top (drawn later so it's visible)
+        // First circle element on the top
         Box(
             modifier = Modifier
                 .size(240.dp)
-                .offset(x = -64.dp, y = 0.dp)
+                .align(Alignment.TopStart)
+                .offset(x = (-96).dp, y = (-96).dp)
                 .background(
-                    color = Green142,
+                    color = Green142.copy(0.8f),
                     shape = CircleShape
                 )
-                // Ensure this element is drawn above the column
-                .zIndex(1f)
+                .alpha(1f)
+        )
+
+        // Second circle element on the top
+        Box(
+            modifier = Modifier
+                .size(160.dp)
+                .align(Alignment.TopStart)
+                .offset(x = (24).dp, y = (-56).dp)
+                .background(
+                    color = Green142.copy(0.8f),
+                    shape = CircleShape
+                )
         )
     }
 }
