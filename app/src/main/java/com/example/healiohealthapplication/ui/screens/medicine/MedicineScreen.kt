@@ -3,110 +3,90 @@ package com.example.healiohealthapplication.ui.screens.medicine
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
-import com.example.healiohealthapplication.ui.components.BottomNavBar
-import com.example.healiohealthapplication.ui.components.TopNavBar
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.material3.FloatingActionButton
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Surface
-import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
 import com.example.healiohealthapplication.data.models.Medicine
 import com.example.healiohealthapplication.navigation.Routes
+import com.example.healiohealthapplication.ui.components.BottomNavBar
+import com.example.healiohealthapplication.ui.components.TopNavBar
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Composable
-fun MedicineScreen(navController: NavController, modifier: Modifier) {
+fun MedicineScreen(navController: NavController, viewModel: MedicineViewModel = hiltViewModel()) {
+    val medicines by remember { viewModel.medicines }.collectAsState()
+
+    // Fetch medicines from Firestore when the screen loads
+    LaunchedEffect(Unit) {
+        viewModel.fetchMedicines()
+    }
+
     Scaffold(
         topBar = { TopNavBar("Medicine", navController) },
         bottomBar = { BottomNavBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {navController.navigate(Routes.ADD_MEDICINE)},
+                onClick = { navController.navigate(Routes.ADD_MEDICINE) },
                 containerColor = Color(0xFF00796B)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Medicine", tint = Color.White)
             }
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF1E3A5F), Color(0xFF1E1E1E))
-                    )
-                )
+                .background(Brush.verticalGradient(listOf(Color(0xFF1E3A5F), Color(0xFF1E1E1E))))
                 .padding(innerPadding)
                 .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Medicine Reminder!", fontSize = 20.sp, color = Color.White)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Circle behind the icon
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(120.dp)
+                    .background(Color(0xFF3A75C4), shape = CircleShape)
             ) {
-                Text(
-                    text = "Medicine Reminder!",
-                    fontSize = 20.sp,
-                    color = Color.White
+                Image(
+                    painter = painterResource(id = R.drawable.medicine),
+                    contentDescription = "Medicine Icon",
+                    modifier = Modifier.size(80.dp)
                 )
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                // Circle behind the icon
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .background(Color(0xFF3A75C4), shape = CircleShape)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.medicine),
-                        contentDescription = "Medicine Icon",
-                        modifier = Modifier.size(80.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                MedicineListContent(navController)
+            if (medicines.isEmpty()) {
+                Text("No medicines added yet.", color = Color.White)
+            } else {
+                MedicineListContent(medicines, navController)
             }
         }
     }
 }
 
-
 @Composable
-fun MedicineListContent(navController: NavController) {
-    val medicines = listOf(
-        Medicine("Burana", "Pain reliever", "After meal", "2 pills/day", "3 months"),
-        Medicine("Vitamin C", "Immune booster", "Morning", "1 pill/day", "1 month"),
-        Medicine("Painkiller", "For headache", "If needed", "1 pill", "As required")
-    )
-
+fun MedicineListContent(medicines: List<Medicine>, navController: NavController) {
     Column {
         medicines.forEach { medicine ->
             Card(
@@ -115,15 +95,17 @@ fun MedicineListContent(navController: NavController) {
                     .fillMaxWidth()
                     .padding(8.dp)
                     .clickable {
-                        // Encode all parameters before passing them to the navigation
-                        val name = URLEncoder.encode(medicine.name, StandardCharsets.UTF_8.toString())
-                        val description = URLEncoder.encode(medicine.description, StandardCharsets.UTF_8.toString())
-                        val schedule = URLEncoder.encode(medicine.schedule, StandardCharsets.UTF_8.toString())
-                        val amount = URLEncoder.encode(medicine.amount, StandardCharsets.UTF_8.toString())
-                        val duration = URLEncoder.encode(medicine.duration, StandardCharsets.UTF_8.toString())
+                        try {
+                            val name = medicine.name?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "Unknown"
+                            val description = medicine.description?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No description"
+                            val schedule = medicine.schedule?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No schedule"
+                            val amount = medicine.amount?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No amount"
+                            val duration = medicine.duration?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No duration"
 
-                        // Navigate to MedicineDetailScreen with all the parameters
-                        navController.navigate("medicine_detail/$name/$description/$schedule/$amount/$duration")
+                            navController.navigate("medicine_detail/$name/$description/$schedule/$amount/$duration")
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
             ) {
                 Row(
@@ -138,7 +120,7 @@ fun MedicineListContent(navController: NavController) {
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(text = medicine.name, fontSize = 16.sp)
+                    Text(text = medicine.name ?: "Unknown Medicine", fontSize = 16.sp)
                 }
             }
         }
