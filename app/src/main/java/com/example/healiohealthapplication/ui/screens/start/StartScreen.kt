@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.BigButton
+import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.theme.Green142
 
 @Composable
@@ -62,33 +63,14 @@ fun StartScreen(
 
             BigButton(
                 text = stringResource(id = R.string.get_started),
-                onClick = { navController.navigate(Routes.SIGNUP) }
+                //onClick = { navController.navigate(Routes.SIGNUP) }
+                // For testing the Home screen
+                onClick = { navController.navigate(Routes.HOME) }
+                // For testing the Welcome screen
+                //onClick = { navController.navigate(Routes.WELCOME) }
             )
         }
 
-        // First circle element on the top
-        Box(
-            modifier = Modifier
-                .size(240.dp)
-                .align(Alignment.TopStart)
-                .offset(x = (-96).dp, y = (-96).dp)
-                .background(
-                    color = Green142.copy(0.8f),
-                    shape = CircleShape
-                )
-                .alpha(1f)
-        )
-
-        // Second circle element on the top
-        Box(
-            modifier = Modifier
-                .size(160.dp)
-                .align(Alignment.TopStart)
-                .offset(x = (24).dp, y = (-56).dp)
-                .background(
-                    color = Green142.copy(0.8f),
-                    shape = CircleShape
-                )
-        )
+        OverlappingCircle();
     }
 }
