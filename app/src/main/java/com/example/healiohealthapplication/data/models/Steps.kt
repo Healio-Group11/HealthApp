@@ -1,4 +1,6 @@
 package com.example.healiohealthapplication.data.models
 
-class Steps {
-}
+data class Steps (
+    var dailyStepsTaken: Int = 0,
+    var dailyStepGoal: Int = 0
+)

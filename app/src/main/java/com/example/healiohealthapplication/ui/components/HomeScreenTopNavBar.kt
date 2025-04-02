@@ -42,6 +42,10 @@ fun HomeScreenTopNavBar(title: String, navController: NavController, expanded: B
                     textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_medicine,
                     onClick = { navController.navigate(Routes.MEDICINE) }
                 )
+                ItemForDropdownMenu(
+                    textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_steps,
+                    onClick = { navController.navigate(Routes.STEPS) }
+                )
             }
         }
 )
