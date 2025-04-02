@@ -8,7 +8,7 @@ import android.hardware.SensorManager
 import kotlinx.coroutines.flow.MutableStateFlow
 
 // tracks steps using the accelerometer
-/*
+
 class StepCounter(context: Context) : SensorEventListener { // implements the sensor event listener (context is the way the sensor is accessed)
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var stepSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
@@ -37,4 +37,4 @@ class StepCounter(context: Context) : SensorEventListener { // implements the se
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // the "SensorEventListener" requires this function
     }
-} */
+}

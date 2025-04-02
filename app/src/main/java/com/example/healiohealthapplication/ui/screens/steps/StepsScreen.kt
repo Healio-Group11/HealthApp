@@ -23,6 +23,7 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
     ) { innerPadding ->
         val userData by sharedViewModel.userData.collectAsState()
         val stepsData by viewModel.stepsData.collectAsState()
+        val newSteps by viewModel.stepCounter.stepCount.collectAsState()
 
         Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
@@ -36,6 +37,10 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
             BigButton(
                 text = "Reset or create steps",
                 onClick = { viewModel.initializeStepsData(userData?.id ?: "") }
+            )
+            BigButton(
+                text = "Update the steps",
+                onClick = { viewModel.updateStepsTakenData(userData?.id ?: "", newSteps) }
             )
         }
     }
