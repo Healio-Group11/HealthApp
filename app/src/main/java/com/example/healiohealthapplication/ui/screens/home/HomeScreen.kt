@@ -2,6 +2,7 @@ package com.example.healiohealthapplication.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.example.healiohealthapplication.ui.components.HomeScreenTopNavBar
 import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.CircleButtonPink
+import com.example.healiohealthapplication.ui.theme.Green142
 
 @Composable
 fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: HomeScreenViewModel, sharedViewModel: SharedViewModel) {
@@ -103,8 +105,9 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                 Box(
                     modifier = Modifier
                         .size(120.dp)
-                        .background(
-                            color = CircleButtonPink, // light pink color
+                        .border(
+                            width = 2.dp,
+                            color = Green142,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -153,7 +156,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
             ) {
                 // 3) Water intake circle
                 CircleButton("Water intake",
-                    onClick = {}
+                    onClick = {},
+                    modifier = Modifier
                 )
 
             }

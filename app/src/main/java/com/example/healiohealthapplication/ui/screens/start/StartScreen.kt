@@ -63,9 +63,9 @@ fun StartScreen(
 
             BigButton(
                 text = stringResource(id = R.string.get_started),
-                //onClick = { navController.navigate(Routes.SIGNUP) }
-                // For testing the Home screen
-                onClick = { navController.navigate(Routes.HOME) }
+                onClick = { navController.navigate(Routes.SIGNUP) }
+                // For testing the Diet screen
+                //onClick = { navController.navigate(Routes.DIET) }
                 // For testing the Welcome screen
                 //onClick = { navController.navigate(Routes.WELCOME) }
             )

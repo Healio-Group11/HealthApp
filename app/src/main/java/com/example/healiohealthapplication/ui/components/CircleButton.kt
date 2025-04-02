@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.healiohealthapplication.ui.theme.CircleButtonPink
 import com.example.healiohealthapplication.ui.theme.Green142
@@ -26,16 +27,16 @@ fun CircleButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
-            .size(120.dp)
-            .background(
-                color = CircleButtonPink, // same light pink
-                shape = CircleShape
-            )
+        modifier = modifier.size(120.dp),
+        shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(containerColor = CircleButtonPink)
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.Black,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
