@@ -58,19 +58,24 @@ fun HealioNavigation() {
         composable(route = Routes.DIET) { DietScreen(navController, modifier = Modifier) }
         composable(route = Routes.STEPS) { StepsScreen(navController, modifier = Modifier) }
         composable(route = Routes.WORKOUT) { WorkoutScreen(navController, modifier = Modifier) }
-        composable(route = Routes.MEDICINE) { MedicineScreen(navController, modifier = Modifier) }
+        //composable(route = Routes.MEDICINE) { MedicineScreen(navController, modifier = Modifier) }
         composable(route = Routes.CALENDAR) { CalendarScreen(navController, modifier = Modifier) }
         composable(route = Routes.WELCOME) { WelcomeScreen(navController, modifier = Modifier) }
 
 
-        // Medicine List Screen (Main Page)
-        composable(route = Routes.MEDICINE_LIST) {
+        // Medicine Main Screen
+        composable(Routes.MEDICINE) {
+            MedicineScreen(navController)
+        }
+
+        // Medicine List Screen
+        composable(Routes.MEDICINE_LIST) {
             MedicineListScreenContent(navController)
         }
 
-        // Medicine Detail Screen (Navigates with arguments)
+        // Medicine Detail Screen with Arguments
         composable(
-            route = "medicine_detail/{medicineName}/{description}/{schedule}/{amount}/{duration}",
+            route = Routes.MEDICINE_DETAIL,
             arguments = listOf(
                 navArgument("medicineName") { type = NavType.StringType },
                 navArgument("description") { type = NavType.StringType },
@@ -79,33 +84,24 @@ fun HealioNavigation() {
                 navArgument("duration") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val name = URLDecoder.decode(
-                backStackEntry.arguments?.getString("medicineName") ?: "Unknown",
-                StandardCharsets.UTF_8.toString()
-            )
-            val description = URLDecoder.decode(
-                backStackEntry.arguments?.getString("description") ?: "No description available",
-                StandardCharsets.UTF_8.toString()
-            )
-            val schedule = URLDecoder.decode(
-                backStackEntry.arguments?.getString("schedule") ?: "No schedule",
-                StandardCharsets.UTF_8.toString()
-            )
-            val amount = URLDecoder.decode(
-                backStackEntry.arguments?.getString("amount") ?: "No amount",
-                StandardCharsets.UTF_8.toString()
-            )
-            val duration = URLDecoder.decode(
-                backStackEntry.arguments?.getString("duration") ?: "No duration",
-                StandardCharsets.UTF_8.toString()
-            )
+            val name = backStackEntry.getDecodedArgument("medicineName")
+            val description = backStackEntry.getDecodedArgument("description")
+            val schedule = backStackEntry.getDecodedArgument("schedule")
+            val amount = backStackEntry.getDecodedArgument("amount")
+            val duration = backStackEntry.getDecodedArgument("duration")
 
             MedicineDetailScreen(name, description, schedule, amount, duration, navController)
         }
 
-        //adding medicine page
-        composable(route = Routes.ADD_MEDICINE) {
+        // Adding medicine page
+        composable(Routes.ADD_MEDICINE) {
             AddMedicineScreen(navController)
         }
     }
 }
+
+// Helper Function to Decode Arguments
+private fun androidx.navigation.NavBackStackEntry.getDecodedArgument(argName: String): String {
+    return URLDecoder.decode(arguments?.getString(argName) ?: "Unknown", StandardCharsets.UTF_8.toString())
+}
+

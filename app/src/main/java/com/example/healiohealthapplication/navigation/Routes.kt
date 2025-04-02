@@ -11,11 +11,10 @@ object Routes {
     const val STEPS = "steps"
     const val WORKOUT = "workout"
     const val MEDICINE = "medicine"
+    const val MEDICINE_LIST = "medicine_list"
+    const val MEDICINE_DETAIL = "medicine_detail/{medicineName}/{description}/{schedule}/{amount}/{duration}"
+    const val ADD_MEDICINE = "add_medicine"
     const val CALENDAR = "calendar"
     const val WELCOME = "welcome"
 
-    // Routes for Medicine Feature
-    const val MEDICINE_LIST = "medicine_list"
-    const val MEDICINE_DETAIL = "medicine_detail"
-    const val ADD_MEDICINE = "add_medicine"
 }
