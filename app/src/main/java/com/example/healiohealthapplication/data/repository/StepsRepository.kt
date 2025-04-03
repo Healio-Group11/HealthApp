@@ -7,13 +7,32 @@ import javax.inject.Inject
 class StepsRepository @Inject constructor() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    // initializes a new daily steps collection with the currently set step goal
-    // also deletes a possible previous collection
-    // TODO: check if this is a proper function (currently it creates id document in between the steps and the values)
-    fun createNewStepsCollection(userId: String, dailyStepGoal: Int, onResult: (Boolean) -> Unit) {
-        // gets the collection from firestore that stores the steps for a specific user with userId
+    // gets current steps and step goal
+    fun getStepData(userId: String, onResult: (Steps?) -> Unit) {
         val stepsCollection = db.collection("users").document(userId).collection("steps")
+        stepsCollection.get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) { // if there are documents in the collection
+                    val latestStepsDocument = documents.documents.first()
+                    val steps = latestStepsDocument.toObject(Steps::class.java) // convert into Steps data class
+                    if (steps != null) {
+                        onResult(steps)
+                    } else {
+                        onResult(null)
+                    }
+                } else {
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener {
+                onResult(null)
+            }
+    }
 
+    // TODO: check if this is a proper function (currently it creates id document in between the steps and the values)
+    // initializes a new daily steps collection with the currently set step goal and deletes possible previous collections
+    fun createStepsData(userId: String, dailyStepGoal: Int, onResult: (Boolean) -> Unit) {
+        val stepsCollection = db.collection("users").document(userId).collection("steps")
         stepsCollection.get()
             .addOnSuccessListener { documents -> // gets all documents within the steps collection
                 val batch = db.batch()
@@ -38,17 +57,16 @@ class StepsRepository @Inject constructor() {
 
 
     // updates the daily steps taken so far
-    fun updateStepsData(userId: String, stepsTaken: Int, onResult: (Boolean) -> Unit) {
-        // gets the collection from firestore that stores the steps for a specific user
+    fun updateStepsData(userId: String, stepsTaken: Int? = null, stepGoal: Int? = null, onResult: (Boolean) -> Unit) {
         val stepsCollection = db.collection("users").document(userId).collection("steps")
-
-        // add the steps that have been taken so far into firestore
-        // Retrieve the latest step document (assuming there is only one document for daily steps)
         stepsCollection.get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) { // if a document exists
                     val latestStepsDocument = documents.documents.first() // get the first document
-                    latestStepsDocument.reference.update("dailyStepsTaken", stepsTaken)
+                    val updates = mutableMapOf<String, Any>()
+                    stepsTaken?.let { updates["dailyStepsTaken"] = it }
+                    stepGoal?.let { updates["dailyStepGoal"] = it }
+                    latestStepsDocument.reference.update(updates)
                         .addOnSuccessListener { onResult(true) }
                         .addOnFailureListener { onResult(false) }
                 } else {

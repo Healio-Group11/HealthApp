@@ -2,6 +2,9 @@ package com.example.healiohealthapplication.ui.screens.steps
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healiohealthapplication.data.models.Steps
@@ -16,16 +19,14 @@ import javax.inject.Inject
 @HiltViewModel
 class StepsViewModel @Inject constructor(
     private val firestoreRepository: StepsRepository,
-    app: Application // should
+    app: Application
 ) : ViewModel() {
-     val stepCounter = StepCounter(app.applicationContext)
-
+    val stepCounter = StepCounter(app.applicationContext)
+    private var userId: String? = null
     private val _stepsData = MutableStateFlow<Steps?>(null)
     val stepsData: StateFlow<Steps?> = _stepsData // to be accessed from UI
+    var currentStepGoal by mutableStateOf<Int?>(0)
 
-    // how do I get the userId in the easiest possible way?
-
-    // on initialization
     init {
         stepCounter.startListening()
         collectSteps()
@@ -33,17 +34,29 @@ class StepsViewModel @Inject constructor(
 
     // gets steps from the stepCounter and updates firestore using updateStepsTakenData
     private fun collectSteps() {
+        Log.d("StepsViewModel", "collectSteps() started") // this gets called
         viewModelScope.launch { // cancels when viewmodel is cleared
             stepCounter.stepCount.collect { newSteps ->
+                Log.d("StepsViewModel", "New steps detected: $newSteps") // never gets logged
                 updateStepsTakenData(userId = "USER_ID", newSteps)
             }
         }
     }
 
+    // get current step goal and steps if they exist
+    fun getCurrentStepData(userId: String) {
+        firestoreRepository.getStepData(userId) { steps ->
+            if (steps != null) {
+                _stepsData.value = Steps(dailyStepsTaken = steps.dailyStepsTaken, dailyStepGoal = steps.dailyStepGoal)
+            } else {
+                Log.e("Firestore", "No steps data found or failed to fetch")
+            }
+        }
+    }
+
     // adds the empty daily steps and a set step goal into firestore
-    // to be called when user first registers and every 24hrs when the steps reset
     fun initializeStepsData(userId: String, dailyStepGoal: Int = 10000) {
-        firestoreRepository.createNewStepsCollection(userId, dailyStepGoal) { success ->
+        firestoreRepository.createStepsData(userId, dailyStepGoal) { success ->
             if (success) {
                 _stepsData.value = Steps(dailyStepsTaken = 0, dailyStepGoal = dailyStepGoal)
             }
@@ -60,13 +73,16 @@ class StepsViewModel @Inject constructor(
         firestoreRepository.updateStepsData(userId, currentSteps) { success ->
             if (success) {
                 _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = updatedSteps)
-                Log.d("StepCounter", "Steps counted: $updatedSteps")
             }
         }
     }
 
     // updates the step goal
-    fun updateDailyStepGoal() {
-
+    fun updateDailyStepGoal(userId: String, stepGoal: Int) {
+        firestoreRepository.updateStepsData(userId, stepGoal = stepGoal) { success ->
+            if (success) {
+                _stepsData.value = _stepsData.value?.copy(dailyStepGoal = stepGoal)
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.BottomNavBar
@@ -39,8 +40,22 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
                 onClick = { viewModel.initializeStepsData(userData?.id ?: "") }
             )
             BigButton(
-                text = "Update the steps",
+                text = "Update the steps taken part",
                 onClick = { viewModel.updateStepsTakenData(userData?.id ?: "", newSteps) }
+            )
+            BigButton(
+                text = "Get current steps from firestore",
+                onClick = { viewModel.getCurrentStepData(userData?.id ?: "") }
+            )
+            StepsOutlinedTextField(
+                value = viewModel.currentStepGoal,
+                onValueChange = { viewModel.currentStepGoal = it },
+                label = "Step Goal",
+                keyboardType = KeyboardType.Number,
+            )
+            BigButton(
+                text = "Update the step goal",
+                onClick = { viewModel.updateDailyStepGoal(userData?.id ?: "", viewModel.currentStepGoal ?: 0) }
             )
         }
     }
