@@ -25,7 +25,10 @@ class StepsViewModel @Inject constructor(
     private var userId: String? = null
     private val _stepsData = MutableStateFlow<Steps?>(null)
     val stepsData: StateFlow<Steps?> = _stepsData // to be accessed from UI
+
     var currentStepGoal by mutableStateOf<Int?>(0)
+    private val _progress = MutableStateFlow(0f)
+    val progress: StateFlow<Float> = _progress
 
     init {
         stepCounter.startListening()
@@ -43,11 +46,19 @@ class StepsViewModel @Inject constructor(
         }
     }
 
+    // calculates how many steps walked / the goal
+    private fun updateStepsProgress() {
+        val stepsTaken = stepsData.value?.dailyStepsTaken ?: 0
+        val stepGoal = stepsData.value?.dailyStepGoal ?: 10000
+        _progress.value = if (stepGoal > 0) (stepsTaken.toFloat() / stepGoal).coerceIn(0f, 1f) else 0f
+    }
+
     // get current step goal and steps if they exist
     fun getCurrentStepData(userId: String) {
         firestoreRepository.getStepData(userId) { steps ->
             if (steps != null) {
                 _stepsData.value = Steps(dailyStepsTaken = steps.dailyStepsTaken, dailyStepGoal = steps.dailyStepGoal)
+                updateStepsProgress()
             } else {
                 Log.e("Firestore", "No steps data found or failed to fetch")
             }
@@ -73,6 +84,7 @@ class StepsViewModel @Inject constructor(
         firestoreRepository.updateStepsData(userId, currentSteps) { success ->
             if (success) {
                 _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = updatedSteps)
+                updateStepsProgress()
             }
         }
     }
@@ -82,6 +94,7 @@ class StepsViewModel @Inject constructor(
         firestoreRepository.updateStepsData(userId, stepGoal = stepGoal) { success ->
             if (success) {
                 _stepsData.value = _stepsData.value?.copy(dailyStepGoal = stepGoal)
+                updateStepsProgress()
             }
         }
     }

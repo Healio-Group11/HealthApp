@@ -1,8 +1,12 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.BottomNavBar
@@ -25,16 +30,19 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
         val userData by sharedViewModel.userData.collectAsState()
         val stepsData by viewModel.stepsData.collectAsState()
         val newSteps by viewModel.stepCounter.stepCount.collectAsState()
+        val progress by viewModel.progress.collectAsState()
 
         Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
-            Text(
-                text = "Step goal: ${stepsData?.dailyStepGoal ?: "No goal"}!"
+            CircularProgressIndicator(
+                progress = progress,
+                modifier = Modifier.size(120.dp),
+                strokeWidth = 8.dp
             )
-            Text(
-                text = "Current steps: ${stepsData?.dailyStepsTaken ?: "No steps yet"}!"
-            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "${stepsData?.dailyStepsTaken ?: 0} / ${stepsData?.dailyStepGoal ?: 0} steps")
+            Spacer(modifier = Modifier.height(40.dp))
             BigButton(
                 text = "Reset or create steps",
                 onClick = { viewModel.initializeStepsData(userData?.id ?: "") }
