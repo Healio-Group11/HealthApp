@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.healiohealthapplication.data.models.Workout
 import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
@@ -25,6 +26,9 @@ import com.example.healiohealthapplication.ui.screens.medicine.MedicineScreen
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.screens.signup.SignUpViewModel
 import com.example.healiohealthapplication.ui.screens.welcome.WelcomeScreen
+import com.example.healiohealthapplication.ui.screens.workout.AddWorkoutScreen
+import com.example.healiohealthapplication.ui.screens.workout.EditWorkoutScreen
+import com.example.healiohealthapplication.ui.screens.workout.ProgressScreen
 import com.example.healiohealthapplication.ui.screens.workout.WorkoutScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -57,10 +61,56 @@ fun HealioNavigation() {
         composable(route = Routes.USER) { UserScreen(navController, modifier = Modifier) }
         composable(route = Routes.DIET) { DietScreen(navController, modifier = Modifier) }
         composable(route = Routes.STEPS) { StepsScreen(navController, modifier = Modifier) }
-        composable(route = Routes.WORKOUT) { WorkoutScreen(navController, modifier = Modifier) }
+        //composable(route = Routes.WORKOUT) { WorkoutScreen(navController)}
         //composable(route = Routes.MEDICINE) { MedicineScreen(navController, modifier = Modifier) }
         composable(route = Routes.CALENDAR) { CalendarScreen(navController, modifier = Modifier) }
         composable(route = Routes.WELCOME) { WelcomeScreen(navController, modifier = Modifier) }
+
+        // Workouts Screen, passing userId as an argument
+        composable(Routes.WORKOUT) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            WorkoutScreen(navController = navController, userId = userId)
+        }
+
+
+
+
+        // Editing a workout
+        composable(
+            route = "edit_workout/{userId}/{workoutName}/{workoutDuration}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType },
+                navArgument("workoutName") { type = NavType.StringType },
+                navArgument("workoutDuration") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            val workoutName = backStackEntry.arguments?.getString("workoutName")
+            val workoutDuration = backStackEntry.arguments?.getString("workoutDuration")
+
+            if (userId != null && workoutName != null && workoutDuration != null) {
+                EditWorkoutScreen(
+                    userId = userId,
+                    workoutName = workoutName,
+                    workoutDuration = workoutDuration,
+                    navController = navController
+                )
+            } else {
+                // Handle the case where arguments are missing
+            }
+        }
+
+
+        // Viewing progress
+        composable(route = Routes.VIEW_PROGRESS) {
+            ProgressScreen(navController, workouts = listOf()) // Pass empty list or real data
+        }
+
+        // Adding new workout
+        composable(route = Routes.ADD_WORKOUT) {
+            AddWorkoutScreen(navController)
+        }
+
 
 
         // Medicine Main Screen
