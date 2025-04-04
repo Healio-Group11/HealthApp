@@ -22,11 +22,16 @@ class StepsViewModel @Inject constructor(
     app: Application
 ) : ViewModel() {
     val stepCounter = StepCounter(app.applicationContext)
-    private var userId: String? = null
+    var currentStepGoal by mutableStateOf<Int?>(0)
+
+    var userId: String? = null
+
+    // to log when we reset the steps
+    private var lastResetDate: String? = null
+
     private val _stepsData = MutableStateFlow<Steps?>(null)
     val stepsData: StateFlow<Steps?> = _stepsData // to be accessed from UI
 
-    var currentStepGoal by mutableStateOf<Int?>(0)
     private val _progress = MutableStateFlow(0f)
     val progress: StateFlow<Float> = _progress
 
@@ -37,11 +42,12 @@ class StepsViewModel @Inject constructor(
 
     // gets steps from the stepCounter and updates firestore using updateStepsTakenData
     private fun collectSteps() {
-        Log.d("StepsViewModel", "collectSteps() started") // this gets called
-        viewModelScope.launch { // cancels when viewmodel is cleared
-            stepCounter.stepCount.collect { newSteps ->
-                Log.d("StepsViewModel", "New steps detected: $newSteps") // never gets logged
-                updateStepsTakenData(userId = "USER_ID", newSteps)
+        userId?.let { id ->
+            viewModelScope.launch { // cancels when viewmodel is cleared
+                stepCounter.stepCount.collect { newSteps ->
+                    Log.d("StepsViewModel", "New steps detected: $newSteps") // never gets logged
+                    updateStepsTakenData(userId = id, newSteps)
+                }
             }
         }
     }
@@ -58,15 +64,16 @@ class StepsViewModel @Inject constructor(
         firestoreRepository.getStepData(userId) { steps ->
             if (steps != null) {
                 _stepsData.value = Steps(dailyStepsTaken = steps.dailyStepsTaken, dailyStepGoal = steps.dailyStepGoal)
+                currentStepGoal = steps.dailyStepGoal
                 updateStepsProgress()
             } else {
-                Log.e("Firestore", "No steps data found or failed to fetch")
+                initializeStepsData(userId)
             }
         }
     }
 
     // adds the empty daily steps and a set step goal into firestore
-    fun initializeStepsData(userId: String, dailyStepGoal: Int = 10000) {
+    private fun initializeStepsData(userId: String, dailyStepGoal: Int = 10000) {
         firestoreRepository.createStepsData(userId, dailyStepGoal) { success ->
             if (success) {
                 _stepsData.value = Steps(dailyStepsTaken = 0, dailyStepGoal = dailyStepGoal)
@@ -75,7 +82,7 @@ class StepsViewModel @Inject constructor(
     }
 
     // update daily steps in firestore that have been taken so far
-    fun updateStepsTakenData(userId: String, newSteps: Int) {
+    private fun updateStepsTakenData(userId: String, newSteps: Int) {
         // count the daily steps taken so far
         val currentSteps = _stepsData.value?.dailyStepsTaken ?: 0
         val updatedSteps = currentSteps + newSteps

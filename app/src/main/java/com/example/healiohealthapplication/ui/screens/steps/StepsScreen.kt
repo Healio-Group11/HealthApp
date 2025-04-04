@@ -1,5 +1,7 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,11 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -29,40 +34,53 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
     ) { innerPadding ->
         val userData by sharedViewModel.userData.collectAsState()
         val stepsData by viewModel.stepsData.collectAsState()
-        val newSteps by viewModel.stepCounter.stepCount.collectAsState()
         val progress by viewModel.progress.collectAsState()
 
+        LaunchedEffect(userData?.id) {
+            userData?.id?.let { id ->
+                viewModel.userId = id
+                viewModel.getCurrentStepData(id)
+            }
+        }
+
         Column(
-            modifier = Modifier.padding(innerPadding).fillMaxSize()
+            modifier = Modifier.padding(innerPadding).fillMaxSize().fillMaxSize().padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularProgressIndicator(
-                progress = progress,
-                modifier = Modifier.size(120.dp),
-                strokeWidth = 8.dp
+            Text(
+                text = "Today's steps",
+                style = MaterialTheme.typography.headlineSmall
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "${stepsData?.dailyStepsTaken ?: 0} / ${stepsData?.dailyStepGoal ?: 0} steps")
-            Spacer(modifier = Modifier.height(40.dp))
-            BigButton(
-                text = "Reset or create steps",
-                onClick = { viewModel.initializeStepsData(userData?.id ?: "") }
-            )
-            BigButton(
-                text = "Update the steps taken part",
-                onClick = { viewModel.updateStepsTakenData(userData?.id ?: "", newSteps) }
-            )
-            BigButton(
-                text = "Get current steps from firestore",
-                onClick = { viewModel.getCurrentStepData(userData?.id ?: "") }
-            )
+            Spacer(modifier = Modifier.height(34.dp))
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(200.dp)) {
+                CircularProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxSize(),
+                    strokeWidth = 10.dp
+                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "${stepsData?.dailyStepsTaken ?: 0}",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "${stepsData?.dailyStepGoal ?: 0}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(60.dp))
             StepsOutlinedTextField(
                 value = viewModel.currentStepGoal,
                 onValueChange = { viewModel.currentStepGoal = it },
                 label = "Step Goal",
                 keyboardType = KeyboardType.Number,
             )
+            Spacer(modifier = Modifier.height(16.dp))
             BigButton(
-                text = "Update the step goal",
+                text = "Update Goal",
                 onClick = { viewModel.updateDailyStepGoal(userData?.id ?: "", viewModel.currentStepGoal ?: 0) }
             )
         }
