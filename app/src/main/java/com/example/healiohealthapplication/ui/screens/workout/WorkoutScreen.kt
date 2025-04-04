@@ -117,17 +117,25 @@ fun WorkoutScreen(
 
 @Composable
 fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
-    var isTimerRunning by remember { mutableStateOf(false) }
-    var elapsedTime by remember { mutableStateOf(0) }
+    var isTimerRunning by remember { mutableStateOf(false) } // Timer state
+    var elapsedTime by remember { mutableStateOf(0) } // Elapsed time in seconds
 
-    // Timer logic: Run timer when the timer is started and stop when paused
-    LaunchedEffect(isTimerRunning) {
-        if (isTimerRunning) {
-            while (elapsedTime < workout.progress * 60) {  // Assuming progress is in minutes
-                delay(1000)
-                elapsedTime += 1
+    val coroutineScope = rememberCoroutineScope()
+
+    // Start Timer logic
+    val startTimer: () -> Unit = {
+        isTimerRunning = true
+        coroutineScope.launch {
+            while (isTimerRunning) {
+                delay(1000) // Wait for 1 second
+                elapsedTime += 1 // Increment elapsed time
             }
         }
+    }
+
+    // Stop Timer logic
+    val stopTimer: () -> Unit = {
+        isTimerRunning = false // Stops the timer
     }
 
     Card(
@@ -169,7 +177,9 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clickable { isTimerRunning = !isTimerRunning }
+                    .clickable {
+                        if (isTimerRunning) stopTimer() else startTimer() // Toggle start/pause
+                    }
                     .padding(top = 8.dp)
             ) {
                 Text(
@@ -187,6 +197,7 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
         }
     }
 }
+
 
 
 
