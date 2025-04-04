@@ -13,18 +13,19 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.data.models.Workout
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.components.BottomNavBar
-import com.example.healiohealthapplication.data.repository.WorkoutsRepository
 
 @Composable
 fun EditWorkoutScreen(
     userId: String,
+    workoutId: String,  // Changed from workoutName to workoutId
     workoutName: String,
     workoutDuration: String,
     navController: NavController,
-    workoutsRepository: WorkoutsRepository = hiltViewModel()
+    viewModel: WorkoutViewModel = hiltViewModel() // Inject ViewModel instead of repository
 ) {
     var updatedWorkoutName by remember { mutableStateOf(workoutName) }
     var updatedDuration by remember { mutableStateOf(workoutDuration) }
+    var isSaving by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopNavBar(title = "Edit Workout", navController = navController) },
@@ -51,16 +52,17 @@ fun EditWorkoutScreen(
             OutlinedTextField(
                 value = updatedDuration,
                 onValueChange = { updatedDuration = it },
-                label = { Text("Workout Duration") },
+                label = { Text("Workout Duration (minutes)") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             // Save Button
             Button(
                 onClick = {
-                    // Update the workout in Firestore
-                    val updatedWorkout = Workout(updatedWorkoutName, updatedDuration, 50) // Assuming 50 is the progress (you may adjust)
-                    workoutsRepository.updateWorkout(userId, workoutName, updatedWorkout) { success ->
+                    isSaving = true
+                    val updatedWorkout = Workout(updatedWorkoutName, updatedDuration, 50) // Assuming 50 is the progress
+                    viewModel.updateWorkout(userId, workoutId, updatedWorkout) { success ->
+                        isSaving = false
                         if (success) {
                             navController.popBackStack() // Go back to the previous screen on success
                         } else {
@@ -69,16 +71,21 @@ fun EditWorkoutScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B)),
+                enabled = !isSaving
             ) {
-                Text("Save Changes", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                if (isSaving) {
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                } else {
+                    Text("Save Changes", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
             }
 
             // Cancel Button
             Button(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB71C1C)) // Red for cancel
             ) {
                 Text("Cancel", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }

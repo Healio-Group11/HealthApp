@@ -24,18 +24,27 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.data.models.Workout
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.TopNavBar
+import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun WorkoutScreen(navController: NavController, userId: String, workoutViewModel: WorkoutViewModel = hiltViewModel()) {
+fun WorkoutScreen(
+    navController: NavController,
+    sharedViewModel: SharedViewModel = hiltViewModel(),
+    workoutViewModel: WorkoutViewModel = hiltViewModel()
+) {
+    val userData by sharedViewModel.userData.collectAsState()
     val workouts by workoutViewModel.workouts.collectAsState()
     val isLoading by workoutViewModel.isLoading.collectAsState()
     val errorMessage by workoutViewModel.errorMessage.collectAsState()
 
-    // Fetch workouts when the screen is first loaded
+    // Extract userId safely
+    val userId = userData?.id
+
+    // Ensure we fetch workouts only when userId is available
     LaunchedEffect(userId) {
-        workoutViewModel.fetchWorkouts(userId)
+        userId?.let { workoutViewModel.fetchWorkouts(it) }
     }
 
     Scaffold(
@@ -63,41 +72,46 @@ fun WorkoutScreen(navController: NavController, userId: String, workoutViewModel
                 Text(it, color = Color.Red, modifier = Modifier.align(Alignment.CenterHorizontally))
             }
 
-            // Display workouts
-            workouts.forEach { workout ->
-                WorkoutCard(
-                    workout = workout,
-                    onEdit = { navController.navigate("edit_workout/$userId/${workout.id}/${workout.name}/${workout.duration}") },
-                    onDelete = {
-                        workoutViewModel.deleteWorkout(userId, workout.id) { success ->
-                            if (success) {
-                                // Handle successful deletion
+            // Display workouts only if userId is not null
+            userId?.let { uid ->
+                workouts.forEach { workout ->
+                    WorkoutCard(
+                        workout = workout,
+                        onEdit = { navController.navigate("edit_workout/$uid/${workout.id}/${workout.name}/${workout.duration}") },
+                        onDelete = {
+                            workoutViewModel.deleteWorkout(uid, workout.id) { success ->
+                                if (success) {
+                                    // Handle successful deletion
+                                }
                             }
                         }
-                    }
-                )
-            }
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = { navController.navigate("add_workout/$userId") },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
-            ) {
-                Text("Add New Workout", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
-            }
+                Button(
+                    onClick = { navController.navigate("add_workout/$uid") },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                ) {
+                    Text("Add New Workout", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
 
-            Button(
-                onClick = { navController.navigate("view_progress/$userId") },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
-            ) {
-                Text("View Progress", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Button(
+                    onClick = { navController.navigate("view_progress/$uid") },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                ) {
+                    Text("View Progress", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            } ?: run {
+                Text("Loading user data...", modifier = Modifier.align(Alignment.CenterHorizontally))
             }
         }
     }
 }
+
 
 
 

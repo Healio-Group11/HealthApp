@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.healiohealthapplication.data.models.Workout
+import android.net.Uri
 import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
@@ -66,39 +67,40 @@ fun HealioNavigation() {
         composable(route = Routes.CALENDAR) { CalendarScreen(navController, modifier = Modifier) }
         composable(route = Routes.WELCOME) { WelcomeScreen(navController, modifier = Modifier) }
 
-        // Workouts Screen, passing userId as an argument
-        composable(Routes.WORKOUT) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            WorkoutScreen(navController = navController, userId = userId)
+        // Workouts Screen
+        composable(Routes.WORKOUT) {
+            WorkoutScreen(navController = navController, sharedViewModel)
         }
-
-
 
 
         // Editing a workout
         composable(
-            route = "edit_workout/{userId}/{workoutName}/{workoutDuration}",
+            route = "edit_workout/{userId}/{workoutId}/{workoutName}/{workoutDuration}",
             arguments = listOf(
                 navArgument("userId") { type = NavType.StringType },
+                navArgument("workoutId") { type = NavType.StringType },
                 navArgument("workoutName") { type = NavType.StringType },
                 navArgument("workoutDuration") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
-            val workoutName = backStackEntry.arguments?.getString("workoutName")
-            val workoutDuration = backStackEntry.arguments?.getString("workoutDuration")
+            val workoutId = backStackEntry.arguments?.getString("workoutId")  // <-- Added workoutId
+            val workoutName = backStackEntry.arguments?.getString("workoutName")?.let { Uri.decode(it) }
+            val workoutDuration = backStackEntry.arguments?.getString("workoutDuration")?.let { Uri.decode(it) }
 
-            if (userId != null && workoutName != null && workoutDuration != null) {
+            if (userId != null && workoutId != null && workoutName != null && workoutDuration != null) {
                 EditWorkoutScreen(
                     userId = userId,
+                    workoutId = workoutId,  // <-- Pass workoutId instead of using workoutName
                     workoutName = workoutName,
                     workoutDuration = workoutDuration,
                     navController = navController
                 )
             } else {
-                // Handle the case where arguments are missing
+                // Handle missing arguments (e.g., show an error screen or navigate back)
             }
         }
+
 
 
         // Viewing progress
@@ -107,9 +109,19 @@ fun HealioNavigation() {
         }
 
         // Adding new workout
-        composable(route = Routes.ADD_WORKOUT) {
-            AddWorkoutScreen(navController)
+        composable(
+            route = "add_workout/{uid}",
+            arguments = listOf(navArgument("uid") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val uid = backStackEntry.arguments?.getString("uid")
+            if (uid != null) {
+                AddWorkoutScreen(navController = navController, userId = uid)
+            } else {
+                // Handle error case if userId is null
+            }
         }
+
+
 
 
 

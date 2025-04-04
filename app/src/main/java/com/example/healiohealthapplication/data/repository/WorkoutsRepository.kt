@@ -2,66 +2,67 @@ package com.example.healiohealthapplication.data.repository
 
 import com.example.healiohealthapplication.data.models.Workout
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class WorkoutsRepository @Inject constructor(private val db: FirebaseFirestore) {
 
     // Save a new workout
-    fun saveWorkout(userId: String, workout: Workout, onResult: (Boolean) -> Unit) {
-        db.collection("users")
-            .document(userId)
-            .collection("workouts")
-            .add(workout)
-            .addOnSuccessListener {
-                onResult(true) // Successfully saved the workout
-            }
-            .addOnFailureListener {
-                onResult(false) // Failed to save the workout
-            }
+    suspend fun saveWorkout(userId: String, workout: Workout): Boolean {
+        return try {
+            db.collection("users")
+                .document(userId)
+                .collection("workouts")
+                .add(workout)
+                .await()
+            true // Successfully saved
+        } catch (e: Exception) {
+            false // Failed to save
+        }
     }
 
     // Get all workouts for a user
-    fun getWorkouts(userId: String, onResult: (List<Workout>?) -> Unit) {
-        db.collection("users")
-            .document(userId)
-            .collection("workouts")
-            .get()
-            .addOnSuccessListener { documents ->
-                val workouts = documents.mapNotNull { it.toObject(Workout::class.java) }
-                onResult(workouts)
-            }
-            .addOnFailureListener {
-                onResult(null) // Failed to retrieve workouts
-            }
+    suspend fun getWorkouts(userId: String): List<Workout>? {
+        return try {
+            val documents = db.collection("users")
+                .document(userId)
+                .collection("workouts")
+                .get()
+                .await()
+
+            documents.mapNotNull { it.toObject(Workout::class.java) }
+        } catch (e: Exception) {
+            null // Failed to retrieve workouts
+        }
     }
 
     // Update an existing workout
-    fun updateWorkout(userId: String, workoutId: String, updatedWorkout: Workout, onResult: (Boolean) -> Unit) {
-        db.collection("users")
-            .document(userId)
-            .collection("workouts")
-            .document(workoutId)
-            .set(updatedWorkout)
-            .addOnSuccessListener {
-                onResult(true) // Successfully updated the workout
-            }
-            .addOnFailureListener {
-                onResult(false) // Failed to update the workout
-            }
+    suspend fun updateWorkout(userId: String, workoutId: String, updatedWorkout: Workout): Boolean {
+        return try {
+            db.collection("users")
+                .document(userId)
+                .collection("workouts")
+                .document(workoutId)
+                .set(updatedWorkout)
+                .await()
+            true // Successfully updated
+        } catch (e: Exception) {
+            false // Failed to update
+        }
     }
 
     // Delete a workout
-    fun deleteWorkout(userId: String, workoutId: String, onResult: (Boolean) -> Unit) {
-        db.collection("users")
-            .document(userId)
-            .collection("workouts")
-            .document(workoutId)
-            .delete()
-            .addOnSuccessListener {
-                onResult(true) // Successfully deleted the workout
-            }
-            .addOnFailureListener {
-                onResult(false) // Failed to delete the workout
-            }
+    suspend fun deleteWorkout(userId: String, workoutId: String): Boolean {
+        return try {
+            db.collection("users")
+                .document(userId)
+                .collection("workouts")
+                .document(workoutId)
+                .delete()
+                .await()
+            true // Successfully deleted
+        } catch (e: Exception) {
+            false // Failed to delete
+        }
     }
 }
