@@ -19,7 +19,7 @@ class StepCounter(context: Context) : SensorEventListener { // implements the se
     private val currentlyUsedSensor = MutableStateFlow(0) // 1 = step detector, 2 = accelerometer
 
     private var previousMagnitude = 0f
-    private var stepThreshold = 11f // this needs to be adjusted
+    private var stepThreshold = 11f
     private var stepCooldown = 0L
     private val stepDelay = 300L // milliseconds between valid steps
 

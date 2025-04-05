@@ -119,10 +119,11 @@ class StepsViewModel @Inject constructor(
 
     // resets all steps
     private fun resetStepsForNewDay(userId: String) {
-        lastStepCount = 0
-        _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = 0)
         firestoreRepository.updateStepsData(userId, 0) { success ->
             if (success) {
+                lastStepCount = 0
+                _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = 0)
+                stepCounter.stepCount.value = 0
                 updateStepsProgress()
             }
         }
