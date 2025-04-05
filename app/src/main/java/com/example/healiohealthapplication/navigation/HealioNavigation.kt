@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.healiohealthapplication.data.models.Workout
 import android.net.Uri
 import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
