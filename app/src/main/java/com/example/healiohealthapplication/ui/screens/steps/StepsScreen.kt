@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.BottomNavBar
+import com.example.healiohealthapplication.ui.components.ErrorCard
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 
@@ -50,9 +51,12 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isSupported) {
+            if (!isSupported && viewModel.showError) {
                 item {
-                    ErrorCard("Step tracking isn't supported on this device.")
+                    ErrorCard(
+                        errorMessage = "Step tracking isn't supported on this device.",
+                        onDismiss = { viewModel.showError = false }
+                    )
                 }
             }
             item {

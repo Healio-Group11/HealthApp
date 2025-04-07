@@ -17,6 +17,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val firestoreRepository: UserRepository,
+    private val stepCounter: StepCounter
 ) : ViewModel() {
     // -- states for current ui screen --
     var currentEmail by mutableStateOf("")
@@ -31,6 +32,7 @@ class SignUpViewModel @Inject constructor(
                         if (saveSuccess) {
                             onSignUpSuccess(userId) // if successful, fetches the data of the current user
                             navController.navigate(Routes.HOME) // and moves the user into HomeScreen
+                            stepCounter.startListening()
                         }
                     }
                 }

@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    // private val stepCounter: StepCounter
+    private val stepCounter: StepCounter
 ) : ViewModel() {
     // -- states for current ui screen --
     var currentEmail by mutableStateOf("")
@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(
                 authRepository.getCurrentUserId()?.let { userId ->
                     onLoginSuccess(userId)
                     navController.navigate(Routes.HOME)
-                    // stepCounter.startListening()
+                    stepCounter.startListening()
                 }
             }
         }

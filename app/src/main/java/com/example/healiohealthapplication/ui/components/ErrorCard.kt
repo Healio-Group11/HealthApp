@@ -1,11 +1,15 @@
-package com.example.healiohealthapplication.ui.screens.steps
+package com.example.healiohealthapplication.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,23 +20,27 @@ import com.example.healiohealthapplication.ui.theme.ErrorRedDarker
 import com.example.healiohealthapplication.ui.theme.ErrorRedLighter
 
 @Composable
-fun ErrorCard(errorMessage: String) {
+fun ErrorCard(
+    errorMessage: String,
+    onDismiss: () -> Unit
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = ErrorRedLighter),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Dismiss",
+                tint = ErrorRedDarker,
+                modifier = Modifier.align(Alignment.CenterEnd).padding(12.dp).clickable { onDismiss() }
+            )
             Text(
                 text = errorMessage,
-                color = ErrorRedDarker, // Darker red for the text
-                style = MaterialTheme.typography.bodyMedium
+                color = ErrorRedDarker,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(Alignment.Center).padding(horizontal = 32.dp, vertical = 24.dp)
             )
         }
     }

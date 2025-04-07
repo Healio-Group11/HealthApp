@@ -28,19 +28,20 @@ class StepsViewModel @Inject constructor(
 ) : ViewModel() {
     val isStepTrackingSupported = stepCounter.isStepTrackingSupported
     var currentStepGoal by mutableStateOf<Int?>(0)
-
+    private var lastStepCount = 0
     var userId: String? = null
 
+    // -- UI values --
     private val _stepsData = MutableStateFlow<Steps?>(null)
-    val stepsData: StateFlow<Steps?> = _stepsData // to be accessed from UI
-    private var lastStepCount = 0
+    val stepsData: StateFlow<Steps?> = _stepsData
 
     private val _progress = MutableStateFlow(0f)
     val progress: StateFlow<Float> = _progress
 
+    var showError by mutableStateOf(true)
+
     init {
-        lastStepCount = stepPrefs.getLastStepCount()
-        stepCounter.startListening()
+        // stepCounter.startListening()
     }
 
     // gets steps from the stepCounter and updates firestore using updateStepsTakenData
@@ -55,18 +56,14 @@ class StepsViewModel @Inject constructor(
                         stepPrefs.setLastResetDate(today)
                         resetStepsForNewDay(userId = id)
                     }
-                    // val stepsDifference = newTotalSteps - lastStepCount !!commented recent
-                    val totalSteps = lastStepCount + newTotalSteps
-                    val stepsDifference = totalSteps - (stepsData.value?.dailyStepsTaken ?: 0)
+                    Log.d("StepViewModel", "From stepCounter to stepViewModel: $newTotalSteps")
+                    Log.d("StepViewModel", "Currently in currentStepGoal: $newTotalSteps")
+                    val originalSteps = stepPrefs.getLastStepCount()
+                    val stepsDifference = newTotalSteps + originalSteps
                     if (stepsDifference > 0) {
                         updateStepsTakenData(userId = id, stepsDifference)
-                        lastStepCount = newTotalSteps
-                        stepPrefs.setLastStepCount(lastStepCount)
+                        Log.d("StepViewModel", "Updating firestore with: $stepsDifference")
                     }
-
-                    Log.d("StepViewModel", "Step count from StepCounter: ${newTotalSteps}.")
-                    Log.d("StepViewModel", "Step count in viewmodel: ${stepsDifference}.")
-                    Log.d("StepViewModel", "StepData: ${stepsData.value?.dailyStepsTaken}.")
                 }
             }
         }
@@ -87,6 +84,8 @@ class StepsViewModel @Inject constructor(
                 _stepsData.value = Steps(dailyStepsTaken = steps.dailyStepsTaken, dailyStepGoal = steps.dailyStepGoal)
                 currentStepGoal = steps.dailyStepGoal
                 updateStepsProgress()
+                lastStepCount = steps.dailyStepsTaken
+                stepPrefs.setLastStepCount(lastStepCount)
             } else {
                 initializeStepsData(userId)
             }
@@ -104,11 +103,9 @@ class StepsViewModel @Inject constructor(
 
     // update daily steps in firestore that have been taken so far
     private fun updateStepsTakenData(userId: String, newSteps: Int) {
-        val currentSteps = _stepsData.value?.dailyStepsTaken ?: 0
-        val updatedSteps = currentSteps + newSteps
-        firestoreRepository.updateStepsData(userId, updatedSteps) { success ->
+        firestoreRepository.updateStepsData(userId, newSteps) { success ->
             if (success) {
-                _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = updatedSteps)
+                _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = newSteps)
                 updateStepsProgress()
             }
         }
@@ -126,8 +123,6 @@ class StepsViewModel @Inject constructor(
 
     // resets all steps
     private fun resetStepsForNewDay(userId: String) {
-        Log.e("StepViewModel", "Reset steps for new day called.")
-        // initialSensorReading = 0
         firestoreRepository.updateStepsData(userId, 0) { success ->
             if (success) {
                 lastStepCount = 0
@@ -141,7 +136,7 @@ class StepsViewModel @Inject constructor(
 
     // gets today's date
     private fun getTodayDate(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // Format: "2025-04-05"
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date())
     }
 }
