@@ -1,7 +1,5 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
-import android.annotation.SuppressLint
-import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,10 +38,6 @@ class StepsViewModel @Inject constructor(
 
     var showError by mutableStateOf(true)
 
-    init {
-        // stepCounter.startListening()
-    }
-
     // gets steps from the stepCounter and updates firestore using updateStepsTakenData
     private fun collectSteps() {
         userId?.let { id ->
@@ -57,7 +51,7 @@ class StepsViewModel @Inject constructor(
                         resetStepsForNewDay(userId = id)
                     }
                     Log.d("StepViewModel", "From stepCounter to stepViewModel: $newTotalSteps")
-                    Log.d("StepViewModel", "Currently in currentStepGoal: $newTotalSteps")
+                    Log.d("StepViewModel", "Currently in lastStepCount: $lastStepCount")
                     val originalSteps = stepPrefs.getLastStepCount()
                     val stepsDifference = newTotalSteps + originalSteps
                     if (stepsDifference > 0) {
@@ -78,14 +72,18 @@ class StepsViewModel @Inject constructor(
 
     // get current step goal and steps if they exist
     fun getCurrentStepData(userId: String) {
-        collectSteps()
         firestoreRepository.getStepData(userId) { steps ->
             if (steps != null) {
                 _stepsData.value = Steps(dailyStepsTaken = steps.dailyStepsTaken, dailyStepGoal = steps.dailyStepGoal)
                 currentStepGoal = steps.dailyStepGoal
                 updateStepsProgress()
-                lastStepCount = steps.dailyStepsTaken
-                stepPrefs.setLastStepCount(lastStepCount)
+                val startUp = stepPrefs.getStartUpBoolean()
+                if (startUp) {
+                    lastStepCount = steps.dailyStepsTaken
+                    stepPrefs.setLastStepCount(lastStepCount)
+                    stepPrefs.setStartUpBoolean(false)
+                }
+                collectSteps()
             } else {
                 initializeStepsData(userId)
             }

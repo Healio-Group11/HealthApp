@@ -22,6 +22,14 @@ class StepPrefs @Inject constructor(@ApplicationContext context: Context) {
 
     fun getLastStepCount(): Int = stepsStorage.getInt("last_step_count", 0)
 
+    fun setStartUpBoolean(boolean: Boolean) {
+        stepsStorage.edit().putBoolean("boolean", boolean).apply()
+    }
+
+    fun getStartUpBoolean(): Boolean {
+        return stepsStorage.getBoolean("boolean", true)
+    }
+
     fun clear() {
         stepsStorage.edit().clear().apply()
     }
