@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
+import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.CircleButton
 import com.example.healiohealthapplication.ui.components.HomeScreenTopNavBar
@@ -47,6 +49,11 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
         // CollectAsState automatically observes changes.
         // Apparently this does not break MVVM architecture! TODO: check whether this is true and that we can use this in UI
         val userData by sharedViewModel.userData.collectAsState()
+        val steps by viewModel.stepCount.collectAsState()
+
+        LaunchedEffect(userData?.id) {
+            userData?.id?.let { viewModel.loadSteps(it) }
+        }
 
         /*Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
@@ -113,8 +120,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        // TODO: Get the actual steps
-                        text = "100",
+                        text = steps.toString(),
                         style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
                     )
                 }
@@ -145,7 +151,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
 
                 // 2) Calorie intake circle
                 CircleButton("Calorie intake",
-                    onClick = {}
+                    onClick = { navController.navigate(Routes.DIET) }
                 )
             }
             // Row (or FlowRow) for the three activity circles
