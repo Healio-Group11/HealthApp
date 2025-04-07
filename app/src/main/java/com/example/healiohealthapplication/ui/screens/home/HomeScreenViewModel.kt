@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-// import com.example.healiohealthapplication.data.repository.StepRepository
+import com.example.healiohealthapplication.data.models.Steps
+import com.example.healiohealthapplication.data.repository.StepsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
+    private val stepsRepository: StepsRepository
 ) : ViewModel() {
 
     // --- appbar states ---
@@ -21,26 +23,20 @@ class HomeScreenViewModel @Inject constructor(
         private set
 
     // --- steps state ---
-    private val _stepCount = MutableStateFlow(0)
-    val stepCount: StateFlow<Int> = _stepCount
+    private val _stepCount = MutableStateFlow<Steps?>(null)
+    val stepCount: StateFlow<Steps?> = _stepCount
 
     fun toggleExpanded() {
         expanded = !expanded
     }
 
-    /*fun loadSteps(userId: String) {
+    fun loadSteps(userId: String) {
         viewModelScope.launch {
-            stepRepository.getStepData(userId) { data ->
-                _stepCount.value = data?.steps ?: 0
+            stepsRepository.getStepData(userId) { data ->
+                _stepCount.value = data
             }
         }
-    } */
+    }
 
-    /* fun updateSteps(userId: String, steps: Int) {
-        viewModelScope.launch {
-            stepRepository.saveStepData(userId, steps) { success ->
-                if (success) _stepCount.value = steps
-            }
-        }
-    }*/
+    // the user cannot and should not update the steps!
 }
