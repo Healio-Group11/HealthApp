@@ -49,11 +49,11 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
         // CollectAsState automatically observes changes.
         // Apparently this does not break MVVM architecture! TODO: check whether this is true and that we can use this in UI
         val userData by sharedViewModel.userData.collectAsState()
-        val steps by viewModel.stepCount.collectAsState()
+        // val steps by viewModel.stepCount.collectAsState()
 
-        LaunchedEffect(userData?.id) {
+        /*LaunchedEffect(userData?.id) {
             userData?.id?.let { viewModel.loadSteps(it) }
-        }
+        } */
 
         /*Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
@@ -120,7 +120,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = steps.toString(),
+                        text = "steps",// steps.toString(),
                         style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
                     )
                 }

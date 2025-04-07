@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.healiohealthapplication.data.repository.StepRepository
+// import com.example.healiohealthapplication.data.repository.StepRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val stepRepository: StepRepository
 ) : ViewModel() {
 
     // --- appbar states ---
@@ -29,19 +28,19 @@ class HomeScreenViewModel @Inject constructor(
         expanded = !expanded
     }
 
-    fun loadSteps(userId: String) {
+    /*fun loadSteps(userId: String) {
         viewModelScope.launch {
             stepRepository.getStepData(userId) { data ->
                 _stepCount.value = data?.steps ?: 0
             }
         }
-    }
+    } */
 
-    fun updateSteps(userId: String, steps: Int) {
+    /* fun updateSteps(userId: String, steps: Int) {
         viewModelScope.launch {
             stepRepository.saveStepData(userId, steps) { success ->
                 if (success) _stepCount.value = steps
             }
         }
-    }
+    }*/
 }
