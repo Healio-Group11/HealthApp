@@ -6,17 +6,20 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 import kotlin.math.sqrt
 
 // tracks steps using the accelerometer or android step counter sensor depending on what the phone has
-class StepCounter(context: Context) : SensorEventListener { // implements the sensor event listener (context is the way the sensor is accessed)
+class StepCounter @Inject constructor(@ApplicationContext context: Context) : SensorEventListener { // implements the sensor event listener (context is the way the sensor is accessed)
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private var stepDetector: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) // use Sensor.TYPE_STEP_COUNTER instead (or both)?
+    private var stepDetector: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     val stepCount = MutableStateFlow(0)
     private val currentlyUsedSensor = MutableStateFlow(0) // 1 = step detector, 2 = accelerometer
+    val isStepTrackingSupported = MutableStateFlow(true)
 
     private var previousMagnitude = 0f
     private var stepThreshold = 11f
@@ -24,19 +27,18 @@ class StepCounter(context: Context) : SensorEventListener { // implements the se
     private val stepDelay = 300L // milliseconds between valid steps
 
     fun startListening() {
+        Log.d("StepCounter", "StepCounter startListening has been called.")
         if (stepDetector == null) {
-            Log.e("StepCounter", "No sensor of type step detector found!") // this gets called
             if (accelerometer != null) {
                 accelerometer?.let {
                     currentlyUsedSensor.value = 2
                     sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
                 }
             } else {
-                Log.e("StepCounter", "No sensor of type accelerometer found!")
-                // some message in UI that steps cannot be used
+                Log.e("StepCounter", "No sensor of type accelerometer or step detector found! Unable to count steps.")
+                isStepTrackingSupported.value = false
             }
         } else {
-            Log.d("StepCounter", "Sensor of type step detector found. Step sensor listening started")
             currentlyUsedSensor.value = 1
             stepDetector?.let { // only listens if there is a step detector in the phone
                 // "this" refers to the current stepCounter instance. this is where updates of listening are sent to
@@ -56,7 +58,6 @@ class StepCounter(context: Context) : SensorEventListener { // implements the se
             if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) { // if an event from specifically the step detector is noticed then
                 val newStepValue = stepCount.value + 1
                 stepCount.value = newStepValue // add a step (one event = one step)
-                Log.d("StepCounter", "Step count steps counted: ${stepCount.value}")
             }
         } else if (currentlyUsedSensor.value == 2) {
             if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
@@ -72,7 +73,6 @@ class StepCounter(context: Context) : SensorEventListener { // implements the se
                 ) {
                     stepCount.value += 1
                     stepCooldown = currentTime
-                    Log.d("StepCounter", "Accelerometer steps counted: ${stepCount.value}")
                 }
 
                 previousMagnitude = magnitude

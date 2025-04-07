@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.healiohealthapplication.data.models.Steps
 import com.example.healiohealthapplication.data.repository.StepsRepository
 import com.example.healiohealthapplication.utils.StepCounter
+import com.example.healiohealthapplication.utils.StepPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,14 +23,13 @@ import javax.inject.Inject
 @HiltViewModel
 class StepsViewModel @Inject constructor(
     private val firestoreRepository: StepsRepository,
-    app: Application
+    private val stepPrefs: StepPrefs,
+    private val stepCounter: StepCounter
 ) : ViewModel() {
-    private val stepCounter = StepCounter(app.applicationContext)
+    val isStepTrackingSupported = stepCounter.isStepTrackingSupported
     var currentStepGoal by mutableStateOf<Int?>(0)
 
     var userId: String? = null
-
-    private var lastResetDate: String? = null
 
     private val _stepsData = MutableStateFlow<Steps?>(null)
     val stepsData: StateFlow<Steps?> = _stepsData // to be accessed from UI
@@ -38,6 +39,7 @@ class StepsViewModel @Inject constructor(
     val progress: StateFlow<Float> = _progress
 
     init {
+        lastStepCount = stepPrefs.getLastStepCount()
         stepCounter.startListening()
     }
 
@@ -47,17 +49,24 @@ class StepsViewModel @Inject constructor(
             viewModelScope.launch { // cancels when viewmodel is cleared
                 stepCounter.stepCount.collect { newTotalSteps ->
                     val today = getTodayDate()
-                    if (lastResetDate != today) {
-                        Log.d("StepsViewModel", "New day detected. Resetting step count.")
-                        lastResetDate = today
+                    val savedDate = stepPrefs.getLastResetDate()
+                    if (savedDate == null) { stepPrefs.setLastResetDate(today) }
+                    if (savedDate != today) {
+                        stepPrefs.setLastResetDate(today)
                         resetStepsForNewDay(userId = id)
                     }
-                    val stepsDifference = newTotalSteps - lastStepCount
+                    // val stepsDifference = newTotalSteps - lastStepCount !!commented recent
+                    val totalSteps = lastStepCount + newTotalSteps
+                    val stepsDifference = totalSteps - (stepsData.value?.dailyStepsTaken ?: 0)
                     if (stepsDifference > 0) {
-                        Log.d("StepsViewModel", "New steps detected: $stepsDifference")
                         updateStepsTakenData(userId = id, stepsDifference)
                         lastStepCount = newTotalSteps
+                        stepPrefs.setLastStepCount(lastStepCount)
                     }
+
+                    Log.d("StepViewModel", "Step count from StepCounter: ${newTotalSteps}.")
+                    Log.d("StepViewModel", "Step count in viewmodel: ${stepsDifference}.")
+                    Log.d("StepViewModel", "StepData: ${stepsData.value?.dailyStepsTaken}.")
                 }
             }
         }
@@ -97,8 +106,6 @@ class StepsViewModel @Inject constructor(
     private fun updateStepsTakenData(userId: String, newSteps: Int) {
         val currentSteps = _stepsData.value?.dailyStepsTaken ?: 0
         val updatedSteps = currentSteps + newSteps
-
-        // update steps in firestore
         firestoreRepository.updateStepsData(userId, updatedSteps) { success ->
             if (success) {
                 _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = updatedSteps)
@@ -119,9 +126,12 @@ class StepsViewModel @Inject constructor(
 
     // resets all steps
     private fun resetStepsForNewDay(userId: String) {
+        Log.e("StepViewModel", "Reset steps for new day called.")
+        // initialSensorReading = 0
         firestoreRepository.updateStepsData(userId, 0) { success ->
             if (success) {
                 lastStepCount = 0
+                stepPrefs.setLastStepCount(lastStepCount)
                 _stepsData.value = _stepsData.value?.copy(dailyStepsTaken = 0)
                 stepCounter.stepCount.value = 0
                 updateStepsProgress()

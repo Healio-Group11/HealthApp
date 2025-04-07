@@ -13,4 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 val Green142 = Color(0xFF638E8B)
 val TextBlack = Color(0xFF000000)
 val BackgroundColour = Color(0xFFFFFFFF)
-val CircleButtonPink = Color(0xFFFBBEBE);
+val CircleButtonPink = Color(0xFFFBBEBE)
+
+// for errors
+val ErrorRedLighter = Color(0xFFFFCDD2)
+val ErrorRedDarker = Color(0xFFD32F2F)

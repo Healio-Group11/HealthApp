@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.signup
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,13 +9,14 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.data.repository.AuthRepository
 import com.example.healiohealthapplication.data.repository.UserRepository
 import com.example.healiohealthapplication.navigation.Routes
+import com.example.healiohealthapplication.utils.StepCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val firestoreRepository: UserRepository
+    private val firestoreRepository: UserRepository,
 ) : ViewModel() {
     // -- states for current ui screen --
     var currentEmail by mutableStateOf("")
