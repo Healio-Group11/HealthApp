@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.workout
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.data.models.Workout
@@ -60,7 +62,7 @@ fun WorkoutScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Workout Tracker", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text("Workout Tracker", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
 
             // Show loading indicator
             if (isLoading) {
@@ -95,7 +97,7 @@ fun WorkoutScreen(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
                 ) {
-                    Text("Add New Workout", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("Add New Workout", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 }
 
                 Button(
@@ -103,7 +105,7 @@ fun WorkoutScreen(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
                 ) {
-                    Text("View Progress", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("View Progress", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 }
             } ?: run {
                 Text("Loading user data...", modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -147,8 +149,8 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(workout.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(workout.duration, fontSize = 14.sp, color = Color.Gray)
+                    Text(workout.name, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                    Text(workout.duration, fontSize = 17.sp, color = Color.Gray)
                 }
                 Row {
                     // Edit Button
@@ -184,19 +186,39 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
             ) {
                 Text(
                     text = if (isTimerRunning) "Pause Timer" else "Start Timer",
-                    fontSize = 16.sp
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .clickable {
+                            if (isTimerRunning) stopTimer() else startTimer() // Toggle start/pause
+                        }
+                        .background(
+                            color = Color(0xFF00796B),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 24.dp, vertical = 12.dp),
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
+
             }
 
-            // Displaying elapsed time
+            Spacer(modifier = Modifier.height(8.dp))
+
+
             Text(
                 text = "Elapsed Time: ${elapsedTime / 60}:${elapsedTime % 60}",
-                fontSize = 14.sp,
-                color = Color.Gray
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
+
+
 
 
 

@@ -23,6 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,16 +33,34 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.OverlappingCircle
+import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.Green142
 
 @Composable
 fun DietScreen(
     navController: NavController,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DietViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
+
+    val dietState = viewModel.diet.collectAsState().value
+
+    val userData by sharedViewModel.userData.collectAsState()
+
+    val userId = userData?.id
+
+    // Load diet data on screen start
+    LaunchedEffect(key1 = userId) {
+        if (userId != null) {
+            viewModel.loadDietData(userId)
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         // Overlapping circles at the top left
@@ -97,11 +118,11 @@ fun DietScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // 3) Macros in separate rows (one per row)
-            MacroRow(label = "Net Carbs", value = "65", unit = "left")
+            MacroRow(label = "Net Carbs", value = dietState.netCarbs.toString(), unit = "")
             Spacer(modifier = Modifier.height(16.dp))
-            MacroRow(label = "Fat", value = "34", unit = "left")
+            MacroRow(label = "Fat", value = dietState.fat.toString(), unit = "")
             Spacer(modifier = Modifier.height(16.dp))
-            MacroRow(label = "Protein", value = "59", unit = "left")
+            MacroRow(label = "Protein", value = dietState.protein.toString(), unit = "")
 
             Spacer(modifier = Modifier.height(36.dp))
 
