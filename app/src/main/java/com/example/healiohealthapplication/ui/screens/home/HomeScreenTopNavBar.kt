@@ -1,4 +1,4 @@
-package com.example.healiohealthapplication.ui.components
+package com.example.healiohealthapplication.ui.screens.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -9,15 +9,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
+import com.example.healiohealthapplication.ui.components.ItemForDropdownMenu
+import com.example.healiohealthapplication.ui.components.TopNavBarIconButton
 
 // TODO: find out if the experimental parts should be switched to something else
 // TODO: change colours and make this prettier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenTopNavBar(title: String, navController: NavController, expanded: Boolean, toggleExpanded: (Boolean) -> Unit)  {
+fun HomeScreenTopNavBar(
+    title: String, navController:
+    NavController, expanded: Boolean,
+    toggleExpanded: (Boolean) -> Unit,
+    viewModel: HomeScreenViewModel
+)  {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -45,6 +53,22 @@ fun HomeScreenTopNavBar(title: String, navController: NavController, expanded: B
                 ItemForDropdownMenu(
                     textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_steps,
                     onClick = { navController.navigate(Routes.STEPS) }
+                )
+                ItemForDropdownMenu(
+                    textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_diet,
+                    onClick = { navController.navigate(Routes.DIET) }
+                )
+                ItemForDropdownMenu(
+                    textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_calendar,
+                    onClick = { navController.navigate(Routes.CALENDAR) }
+                )
+                ItemForDropdownMenu(
+                    textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_user,
+                    onClick = { navController.navigate(Routes.USER) }
+                )
+                ItemForDropdownMenu(
+                    textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_logout,
+                    onClick = { viewModel.logout(navController) }
                 )
             }
         }

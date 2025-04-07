@@ -17,5 +17,9 @@ class AuthRepository @Inject constructor() {
             .addOnCompleteListener { onResult(it.isSuccessful) }
     }
 
+    fun logout() {
+        auth.signOut()
+    }
+
     fun getCurrentUserId(): String? = auth.currentUser?.uid
 }

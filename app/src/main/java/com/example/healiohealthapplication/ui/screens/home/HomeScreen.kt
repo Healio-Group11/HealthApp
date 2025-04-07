@@ -32,7 +32,6 @@ import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.CircleButton
-import com.example.healiohealthapplication.ui.components.HomeScreenTopNavBar
 import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.Green142
@@ -40,7 +39,7 @@ import com.example.healiohealthapplication.ui.theme.Green142
 @Composable
 fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: HomeScreenViewModel, sharedViewModel: SharedViewModel) {
     Scaffold(
-        topBar = { HomeScreenTopNavBar("Home", navController, viewModel.expanded, { viewModel.toggleExpanded() }) },
+        topBar = { HomeScreenTopNavBar("Home", navController, viewModel.expanded, { viewModel.toggleExpanded() }, viewModel = viewModel) },
         bottomBar = { BottomNavBar(navController) }
 
     ) { innerPadding ->

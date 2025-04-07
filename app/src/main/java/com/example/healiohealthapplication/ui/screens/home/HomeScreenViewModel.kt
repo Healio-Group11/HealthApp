@@ -5,8 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.healiohealthapplication.data.models.Steps
+import com.example.healiohealthapplication.data.repository.AuthRepository
 import com.example.healiohealthapplication.data.repository.StepsRepository
+import com.example.healiohealthapplication.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val stepsRepository: StepsRepository
+    private val stepsRepository: StepsRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     // --- appbar states ---
@@ -38,5 +42,8 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    // the user cannot and should not update the steps!
+    fun logout(navController: NavController) {
+        authRepository.logout()
+        navController.navigate(Routes.START)
+    }
 }
