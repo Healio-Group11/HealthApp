@@ -14,9 +14,11 @@ class UserRepository @Inject constructor() {
         val user = User(
             id = userId,
             email = email,
-            weight = "",
-            height = "",
-            bmi = ""
+            weight = "--",
+            height = "--",
+            age = "--",
+            gender = "--",
+            bmi = "--"
         )
 
         // adds the specific user to firestore
@@ -50,6 +52,28 @@ class UserRepository @Inject constructor() {
             .addOnFailureListener { e ->
                 Log.w("FirestoreRepository", "Error getting user data", e)
                 onResult(null)
+            }
+    }
+
+    fun updateUserData(user: User, onResult: (Boolean) -> Unit) {
+        val updates = mapOf(
+            "age" to user.age,
+            "gender" to user.gender,
+            "height" to user.height,
+            "weight" to user.weight,
+            "bmi" to user.bmi
+        )
+
+        db.collection("users")
+            .document(user.id)
+            .update(updates)
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "User data updated successfully!")
+                onResult(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirestoreRepository", "Error updating user data", e)
+                onResult(false)
             }
     }
 }

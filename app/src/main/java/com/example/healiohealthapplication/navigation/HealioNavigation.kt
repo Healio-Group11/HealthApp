@@ -26,6 +26,8 @@ import com.example.healiohealthapplication.ui.screens.medicine.MedicineScreen
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.screens.signup.SignUpViewModel
 import com.example.healiohealthapplication.ui.screens.steps.StepsViewModel
+import com.example.healiohealthapplication.ui.screens.user.EditUserScreen
+import com.example.healiohealthapplication.ui.screens.user.UserViewModel
 import com.example.healiohealthapplication.ui.screens.welcome.WelcomeScreen
 import com.example.healiohealthapplication.ui.screens.workout.AddWorkoutScreen
 import com.example.healiohealthapplication.ui.screens.workout.EditWorkoutScreen
@@ -44,7 +46,7 @@ fun HealioNavigation() {
     // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen
     NavHost(
         navController = navController,
-        startDestination = Routes.START // change HOME to START!
+        startDestination = Routes.START
     ) {
         composable(route = Routes.START) { StartScreen(navController, modifier = Modifier) }
         composable(route = Routes.HOME) {
@@ -59,7 +61,14 @@ fun HealioNavigation() {
             val signUpViewModel: SignUpViewModel = hiltViewModel()
             SignUpScreen(navController, modifier = Modifier, signUpViewModel, sharedViewModel)
         }
-        composable(route = Routes.USER) { UserScreen(navController, modifier = Modifier) }
+        composable(route = Routes.USER) {
+            val userViewModel: UserViewModel = hiltViewModel()
+            UserScreen(navController, userViewModel, sharedViewModel)
+        }
+        composable(route = Routes.EDIT_USER) {
+            val userViewModel: UserViewModel = hiltViewModel()
+            EditUserScreen(navController, userViewModel, sharedViewModel)
+        }
         composable(route = Routes.DIET) { DietScreen(navController, modifier = Modifier) }
         composable(route = Routes.STEPS) {
             val stepsViewModel: StepsViewModel = hiltViewModel()
