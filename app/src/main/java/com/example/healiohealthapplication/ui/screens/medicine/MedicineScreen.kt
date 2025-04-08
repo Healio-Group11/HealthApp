@@ -4,8 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -87,7 +90,11 @@ fun MedicineScreen(navController: NavController, viewModel: MedicineViewModel = 
 
 @Composable
 fun MedicineListContent(medicines: List<Medicine>, navController: NavController) {
-    Column {
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         medicines.forEach { medicine ->
             Card(
                 shape = RoundedCornerShape(12.dp),
@@ -126,4 +133,6 @@ fun MedicineListContent(medicines: List<Medicine>, navController: NavController)
         }
     }
 }
+
+
 
