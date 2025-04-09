@@ -9,6 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import android.net.Uri
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
@@ -16,6 +19,7 @@ import com.example.healiohealthapplication.ui.screens.home.HomeScreenViewModel
 import com.example.healiohealthapplication.ui.screens.login.LoginScreen
 import com.example.healiohealthapplication.ui.screens.login.LoginViewModel
 import com.example.healiohealthapplication.ui.screens.medicine.AddMedicineScreen
+import com.example.healiohealthapplication.ui.screens.medicine.EditMedicineScreen
 import com.example.healiohealthapplication.ui.screens.medicine.MedicineDetailScreen
 import com.example.healiohealthapplication.ui.screens.medicine.MedicineListScreenContent
 import com.example.healiohealthapplication.ui.screens.signup.SignUpScreen
@@ -23,6 +27,7 @@ import com.example.healiohealthapplication.ui.screens.start.StartScreen
 import com.example.healiohealthapplication.ui.screens.steps.StepsScreen
 import com.example.healiohealthapplication.ui.screens.user.UserScreen
 import com.example.healiohealthapplication.ui.screens.medicine.MedicineScreen
+import com.example.healiohealthapplication.ui.screens.medicine.MedicineViewModel
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.screens.signup.SignUpViewModel
 import com.example.healiohealthapplication.ui.screens.steps.StepsViewModel
@@ -138,10 +143,11 @@ fun HealioNavigation() {
             MedicineListScreenContent(navController)
         }
 
-        // Medicine Detail Screen with Arguments
+        // Medicine Detail Screen with Arguments (including medicineId)
         composable(
-            route = Routes.MEDICINE_DETAIL,
+            route = "medicine_detail/{medicineId}/{medicineName}/{description}/{schedule}/{amount}/{duration}",
             arguments = listOf(
+                navArgument("medicineId") { type = NavType.StringType },  // Add medicineId as required
                 navArgument("medicineName") { type = NavType.StringType },
                 navArgument("description") { type = NavType.StringType },
                 navArgument("schedule") { type = NavType.StringType },
@@ -149,19 +155,69 @@ fun HealioNavigation() {
                 navArgument("duration") { type = NavType.StringType }
             )
         ) { backStackEntry ->
+            val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
             val name = backStackEntry.getDecodedArgument("medicineName")
             val description = backStackEntry.getDecodedArgument("description")
             val schedule = backStackEntry.getDecodedArgument("schedule")
             val amount = backStackEntry.getDecodedArgument("amount")
             val duration = backStackEntry.getDecodedArgument("duration")
 
-            MedicineDetailScreen(name, description, schedule, amount, duration, navController)
+            MedicineDetailScreen(
+                medicineId = medicineId,
+                medicineName = name,
+                description = description,
+                schedule = schedule,
+                amount = amount,
+                duration = duration,
+                navController = navController
+            )
         }
+
+
+
 
         // Adding medicine page
         composable(Routes.ADD_MEDICINE) {
             AddMedicineScreen(navController)
         }
+
+        //Edit medicine
+        composable(
+            "edit_medicine/{medicineId}",
+            arguments = listOf(
+                navArgument("medicineId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
+
+            // Get the ViewModel
+            val medicineViewModel: MedicineViewModel = hiltViewModel()
+
+            // Trigger fetching of the medicine by ID
+            medicineViewModel.getMedicineById(medicineId)
+
+            // Observe the medicine state flow
+            val medicine = medicineViewModel.medicine.collectAsState().value
+
+            // If the medicine data is available, display the EditMedicineScreen
+            if (medicine != null) {
+                EditMedicineScreen(
+                    medicineId = medicineId,
+                    medicineName = medicine.name,
+                    description = medicine.description,
+                    schedule = medicine.schedule,
+                    amount = medicine.amount,
+                    duration = medicine.duration,
+                    navController = navController
+                )
+            } else {
+                // Optionally handle loading or error case
+                // Navigate back if not found or show a loading screen
+                navController.navigateUp()
+            }
+        }
+
+
     }
 }
 

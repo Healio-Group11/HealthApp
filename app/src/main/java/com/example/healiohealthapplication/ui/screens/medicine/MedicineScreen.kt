@@ -32,11 +32,14 @@ import java.nio.charset.StandardCharsets
 
 @Composable
 fun MedicineScreen(navController: NavController, viewModel: MedicineViewModel = hiltViewModel()) {
-    val medicines by remember { viewModel.medicines }.collectAsState()
+    val medicines by viewModel.medicines.collectAsState()
 
-    // Fetch medicines from Firestore when the screen loads
     LaunchedEffect(Unit) {
-        viewModel.fetchMedicines()
+        val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+        if (!currentUserId.isNullOrEmpty()) {
+            viewModel.setUserId(currentUserId)
+            viewModel.fetchMedicines()
+        }
     }
 
     Scaffold(
@@ -63,7 +66,6 @@ fun MedicineScreen(navController: NavController, viewModel: MedicineViewModel = 
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Circle behind the icon
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier

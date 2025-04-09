@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.medicine
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,9 +18,9 @@ import com.example.healiohealthapplication.data.models.Medicine
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-
 @Composable
 fun MedicineListScreenContent(navController: NavController) {
+    // Example medicines, should be fetched from a ViewModel or repository in real app
     val medicines = listOf(
         Medicine("Burana", "Pain reliever", "After meal", "1 pill", "5 days"),
         Medicine("Vitamin C", "Boosts immune system", "Morning", "1 tablet", "Daily"),
@@ -34,13 +35,17 @@ fun MedicineListScreenContent(navController: NavController) {
                     .fillMaxWidth()
                     .padding(8.dp)
                     .clickable {
+                        // Encoding the medicine details
+                        val encodedId = URLEncoder.encode(medicine.id ?: "0", StandardCharsets.UTF_8.toString())
                         val encodedName = URLEncoder.encode(medicine.name, StandardCharsets.UTF_8.toString())
                         val encodedDesc = URLEncoder.encode(medicine.description, StandardCharsets.UTF_8.toString())
                         val encodedSchedule = URLEncoder.encode(medicine.schedule, StandardCharsets.UTF_8.toString())
                         val encodedAmount = URLEncoder.encode(medicine.amount, StandardCharsets.UTF_8.toString())
                         val encodedDuration = URLEncoder.encode(medicine.duration, StandardCharsets.UTF_8.toString())
 
-                        navController.navigate("medicine_detail/$encodedName/$encodedDesc/$encodedSchedule/$encodedAmount/$encodedDuration")
+                        // Navigate to the Medicine Detail Screen with the encoded arguments
+                        navController.navigate("medicine_detail/$encodedId/$encodedName/$encodedDesc/$encodedSchedule/$encodedAmount/$encodedDuration")
+
                     }
             ) {
                 Row(
@@ -55,7 +60,10 @@ fun MedicineListScreenContent(navController: NavController) {
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(text = medicine.name, fontSize = 16.sp)
+                    Text(
+                        text = medicine.name,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }

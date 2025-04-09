@@ -28,6 +28,14 @@ fun AddMedicineScreen(
     var amount by remember { mutableStateOf("") }
     var duration by remember { mutableStateOf("") }
 
+    // Set the userId when screen loads
+    LaunchedEffect(Unit) {
+        val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+        if (!currentUserId.isNullOrEmpty()) {
+            viewModel.setUserId(currentUserId)
+        }
+    }
+
     Scaffold(
         topBar = { TopNavBar("Add Medicine", navController) },
         bottomBar = { BottomNavBar(navController) },
@@ -67,7 +75,7 @@ fun AddMedicineScreen(
                         )
                         viewModel.addMedicine(medicine) { success ->
                             if (success) {
-                                navController.navigateUp() //Navigate back after adding
+                                navController.navigateUp() // Navigate back after adding
                             }
                         }
                     } catch (e: Exception) {
