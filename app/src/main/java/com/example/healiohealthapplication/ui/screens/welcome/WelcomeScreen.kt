@@ -135,5 +135,12 @@ fun WelcomeScreen(
                 contentScale = ContentScale.Fit
             )
         }
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        BigButton(
+            text = stringResource(id = R.string.next),
+            onClick = { navController.navigate(Routes.HOME) }
+        )
     }
 }

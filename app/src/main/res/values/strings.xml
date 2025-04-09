@@ -12,4 +12,5 @@
     <string name="home_screen_top_nav_bar_dropdown_text_for_diet">diet</string>
     <string name="home_screen_top_nav_bar_dropdown_text_for_calendar">calendar</string>
     <string name="home_screen_top_nav_bar_dropdown_text_for_logout">logout</string>
+    <string name="next">Next</string>
 </resources>
