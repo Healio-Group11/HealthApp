@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.data.repository
 
+import android.util.Log
 import com.example.healiohealthapplication.data.models.Medicine
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
@@ -10,11 +11,13 @@ class MedicineRepository @Inject constructor() {
 
     // Add a medicine to Firestore under a specific user's collection
     fun addMedicine(userId: String, medicine: Medicine, onResult: (Boolean) -> Unit) {
-        val collection = db.collection("user").document(userId).collection("medicine")
+        val collection = db.collection("users").document(userId).collection("medicine")
         val document = collection.document() // Use the correct user-specific path
         val medicineWithId = medicine.copy(id = document.id)
         document.set(medicineWithId)
-            .addOnSuccessListener { onResult(true) }
+            .addOnSuccessListener {
+                onResult(true)
+            }
             .addOnFailureListener {
                 onResult(false)
                 // Optionally log the error for better debugging
@@ -24,7 +27,7 @@ class MedicineRepository @Inject constructor() {
 
     // Fetch all medicines for a specific user
     fun getMedicines(userId: String, onResult: (List<Medicine>) -> Unit) {
-        db.collection("user").document(userId)
+        db.collection("users").document(userId)
             .collection("medicine")
             .get()
             .addOnSuccessListener { snapshot ->
@@ -40,7 +43,7 @@ class MedicineRepository @Inject constructor() {
 
     // Fetch a specific medicine by its ID
     fun getMedicineById(userId: String, medicineId: String, onResult: (Medicine?) -> Unit) {
-        db.collection("user").document(userId)
+        db.collection("users").document(userId)
             .collection("medicine").document(medicineId).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
@@ -59,7 +62,7 @@ class MedicineRepository @Inject constructor() {
 
     // Update a specific medicine
     fun updateMedicine(userId: String, medicine: Medicine, onResult: (Boolean) -> Unit) {
-        db.collection("user").document(userId)
+        db.collection("users").document(userId)
             .collection("medicine").document(medicine.id ?: "")
             .set(medicine)
             .addOnSuccessListener { onResult(true) }
@@ -72,7 +75,7 @@ class MedicineRepository @Inject constructor() {
 
     // Delete a specific medicine
     fun deleteMedicine(userId: String, medicineId: String, onResult: (Boolean) -> Unit) {
-        db.collection("user").document(userId)
+        db.collection("users").document(userId)
             .collection("medicine").document(medicineId)
             .delete()
             .addOnSuccessListener { onResult(true) }

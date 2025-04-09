@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.medicine
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.healiohealthapplication.data.models.Medicine
 import com.example.healiohealthapplication.data.repository.MedicineRepository
