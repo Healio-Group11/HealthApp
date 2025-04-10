@@ -9,6 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import android.net.Uri
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -184,38 +188,28 @@ fun HealioNavigation() {
         //Edit medicine
         composable(
             "edit_medicine/{medicineId}",
-            arguments = listOf(
-                navArgument("medicineId") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("medicineId") { type = NavType.StringType })
         ) { backStackEntry ->
             val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
-
-            // Get the ViewModel
             val medicineViewModel: MedicineViewModel = hiltViewModel()
-
-            // Trigger fetching of the medicine by ID
             medicineViewModel.getMedicineById(medicineId)
 
-            // Observe the medicine state flow
             val medicine = medicineViewModel.medicine.collectAsState().value
 
-            // If the medicine data is available, display the EditMedicineScreen
             if (medicine != null) {
                 EditMedicineScreen(
                     medicineId = medicineId,
-                    medicineName = medicine.name,
-                    description = medicine.description,
-                    schedule = medicine.schedule,
-                    amount = medicine.amount,
-                    duration = medicine.duration,
                     navController = navController
                 )
             } else {
-                // Optionally handle loading or error case
-                // Navigate back if not found or show a loading screen
-                navController.navigateUp()
+                // Handle error state or loading state
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
         }
+
+
 
 
     }
