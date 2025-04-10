@@ -26,7 +26,7 @@ class LoginViewModel @Inject constructor(
             if (success) {
                 authRepository.getCurrentUserId()?.let { userId ->
                     onLoginSuccess(userId)
-                    navController.navigate(Routes.WELCOME)
+                    navController.navigate(Routes.HOME)
                     stepCounter.startListening()
                 }
             }
