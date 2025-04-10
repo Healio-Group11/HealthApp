@@ -31,7 +31,7 @@ import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 fun UserScreen(navController: NavController, viewModel: UserViewModel, sharedViewModel: SharedViewModel) {
     val userData by sharedViewModel.userData.collectAsState()
     Scaffold(
-        topBar = { TopNavBar(stringResource(R.string.user_top_nav_bar_title), navController) },
+        topBar = { TopNavBar(stringResource(R.string.user_top_nav_bar_title), navController, onBackClick = { navController.navigate(Routes.HOME) }) },
         bottomBar = { BottomNavBar(navController) },
         floatingActionButton = { userData?.let { UniqueFloatingActionButton(navController = navController, route = Routes.EDIT_USER, icon = Icons.Filled.Edit, contentDescription = "Edit button") } }
     ) { innerPadding ->

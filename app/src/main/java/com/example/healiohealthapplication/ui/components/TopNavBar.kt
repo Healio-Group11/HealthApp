@@ -14,7 +14,11 @@ import com.example.healiohealthapplication.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavBar(title: String, navController: NavController) {
+fun TopNavBar(
+    title: String,
+    navController: NavController,
+    onBackClick: () -> Unit = { navController.navigateUp() }
+) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -25,7 +29,7 @@ fun TopNavBar(title: String, navController: NavController) {
             TopNavBarIconButton(
                 contentDescription = R.string.top_nav_bar_icon_description,
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
-                onClick = { navController.navigateUp() }
+                onClick = onBackClick
             )
         },
     )
