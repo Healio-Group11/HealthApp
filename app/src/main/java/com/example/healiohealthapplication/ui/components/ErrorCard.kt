@@ -15,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.theme.ErrorRedDarker
 import com.example.healiohealthapplication.ui.theme.ErrorRedLighter
 
@@ -32,15 +34,15 @@ fun ErrorCard(
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Dismiss",
+                contentDescription = stringResource(R.string.error_card_icon_description),
                 tint = ErrorRedDarker,
-                modifier = Modifier.align(Alignment.CenterEnd).padding(12.dp).clickable { onDismiss() }
+                modifier = Modifier.align(Alignment.CenterEnd).padding(start = 24.dp, end = 12.dp).clickable { onDismiss() }
             )
             Text(
                 text = errorMessage,
                 color = ErrorRedDarker,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.align(Alignment.Center).padding(horizontal = 32.dp, vertical = 24.dp)
+                modifier = Modifier.align(Alignment.CenterStart).padding(horizontal = 32.dp, vertical = 24.dp)
             )
         }
     }

@@ -12,13 +12,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.ErrorCard
@@ -29,18 +30,8 @@ import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 @Composable
 fun UserScreen(navController: NavController, viewModel: UserViewModel, sharedViewModel: SharedViewModel) {
     val userData by sharedViewModel.userData.collectAsState()
-    LaunchedEffect(userData?.id) {
-        userData?.let { user ->
-            viewModel.userId = user.id
-            viewModel.age = user.age
-            viewModel.gender = user.gender
-            viewModel.height = user.height
-            viewModel.weight = user.weight
-            viewModel.bmi = user.bmi
-        }
-    }
     Scaffold(
-        topBar = { TopNavBar("Profile", navController) },
+        topBar = { TopNavBar(stringResource(R.string.user_top_nav_bar_title), navController) },
         bottomBar = { BottomNavBar(navController) },
         floatingActionButton = { userData?.let { UniqueFloatingActionButton(navController = navController, route = Routes.EDIT_USER, icon = Icons.Filled.Edit, contentDescription = "Edit button") } }
     ) { innerPadding ->
@@ -51,7 +42,7 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel, sharedVie
         ) {
             item {
                 Text(
-                    text = "Your information",
+                    text = stringResource(R.string.user_screen_title),
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(top = 16.dp)
                 )
@@ -68,8 +59,16 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel, sharedVie
                     )
                 } ?: run {
                     ErrorCard(
-                        errorMessage = "User data not available",
-                        onDismiss = { viewModel.showError = false }
+                        errorMessage = stringResource(R.string.user_screen_loading_data_error_message_text),
+                        onDismiss = { viewModel.showUserDataError = false }
+                    )
+                }
+            }
+            item {
+                viewModel.showUserError.takeIf { it }?.let {
+                    ErrorCard(
+                        errorMessage = stringResource(R.string.user_screen_updating_data_error_message_text),
+                        onDismiss = { viewModel.showUserError = false }
                     )
                 }
             }
