@@ -63,7 +63,8 @@ fun EditUserScreen(navController: NavController, viewModel: UserViewModel, share
                     expanded = viewModel.isGenderDropdownExpanded,
                     genderOptions = viewModel.genderOptions,
                     onExpandChanged = { viewModel.isGenderDropdownExpanded = it },
-                    onGenderSelected = { viewModel.gender = it }
+                    onGenderSelected = { viewModel.gender = it },
+                    viewModel = viewModel
                 )
                 InfoInputOutlinedTextField(
                     viewModel.height,

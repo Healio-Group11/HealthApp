@@ -3,6 +3,9 @@ package com.example.healiohealthapplication.ui.screens.user
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.data.models.User
@@ -27,6 +30,8 @@ class UserViewModel @Inject constructor(
     // -- for gender dropdown menu --
     var isGenderDropdownExpanded by mutableStateOf(false)
     val genderOptions = listOf("Male", "Female")
+    var textFieldWidth by mutableStateOf(0.dp)
+        private set
 
     // -- for user screen errors --
     var showUserDataError by mutableStateOf(true)
@@ -69,7 +74,7 @@ class UserViewModel @Inject constructor(
     private fun calculateUserBMI(): Boolean {
         if (height.contains(".")) {
             bmi = "--"
-            errorMessageEditUser = "Invalid height input. Input height in centimeters."
+            errorMessageEditUser = "Invalid height input. Input height using centimeters."
             return false
         }
 
@@ -85,5 +90,9 @@ class UserViewModel @Inject constructor(
             errorMessageEditUser = "Invalid height or weight for BMI calculation"
             return false
         }
+    }
+
+    fun updateTextFieldWidth(newWidth: Dp) {
+        textFieldWidth = newWidth
     }
 }

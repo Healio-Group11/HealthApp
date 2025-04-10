@@ -36,7 +36,7 @@ fun ErrorCard(
                 imageVector = Icons.Default.Close,
                 contentDescription = stringResource(R.string.error_card_icon_description),
                 tint = ErrorRedDarker,
-                modifier = Modifier.align(Alignment.CenterEnd).padding(start = 24.dp, end = 12.dp).clickable { onDismiss() }
+                modifier = Modifier.align(Alignment.CenterEnd).padding(12.dp).clickable { onDismiss() }
             )
             Text(
                 text = errorMessage,
