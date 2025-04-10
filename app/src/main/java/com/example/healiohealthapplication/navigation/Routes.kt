@@ -7,6 +7,7 @@ object Routes {
     const val SIGNUP = "signup"
     const val HOME = "home"
     const val USER = "user"
+    const val EDIT_USER = "edit_user"
     const val DIET = "diet"
     const val STEPS = "steps"
     const val WORKOUT = "workout"
@@ -19,5 +20,4 @@ object Routes {
     const val ADD_MEDICINE = "add_medicine"
     const val CALENDAR = "calendar"
     const val WELCOME = "welcome"
-
 }

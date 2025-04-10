@@ -50,13 +50,10 @@ class StepsViewModel @Inject constructor(
                         stepPrefs.setLastResetDate(today)
                         resetStepsForNewDay(userId = id)
                     }
-                    Log.d("StepViewModel", "From stepCounter to stepViewModel: $newTotalSteps")
-                    Log.d("StepViewModel", "Currently in lastStepCount: $lastStepCount")
                     val originalSteps = stepPrefs.getLastStepCount()
                     val stepsDifference = newTotalSteps + originalSteps
                     if (stepsDifference > 0) {
                         updateStepsTakenData(userId = id, stepsDifference)
-                        Log.d("StepViewModel", "Updating firestore with: $stepsDifference")
                     }
                 }
             }

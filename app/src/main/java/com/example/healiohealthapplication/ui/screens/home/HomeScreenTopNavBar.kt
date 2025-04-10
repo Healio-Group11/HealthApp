@@ -9,11 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
-import com.example.healiohealthapplication.ui.components.ItemForDropdownMenu
 import com.example.healiohealthapplication.ui.components.TopNavBarIconButton
 
 // TODO: find out if the experimental parts should be switched to something else
@@ -68,7 +67,8 @@ fun HomeScreenTopNavBar(
                 )
                 ItemForDropdownMenu(
                     textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_logout,
-                    onClick = { viewModel.logout(navController) }
+                    onClick = { viewModel.logout(navController) },
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
