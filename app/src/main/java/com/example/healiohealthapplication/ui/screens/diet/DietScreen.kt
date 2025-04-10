@@ -20,16 +20,20 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +43,11 @@ import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.Green142
+import androidx.compose.runtime.setValue
+import android.content.Context
+import androidx.work.*
+import com.example.healiohealthapplication.worker.WaterReminderWorker
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun DietScreen(
@@ -179,6 +188,9 @@ fun MacroRow(label: String, value: String, unit: String) {
 
 @Composable
 fun WaterReminderSection() {
+    var reminderInterval by remember { mutableStateOf(2f) } // Default 2 hours
+    val context = LocalContext.current
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -230,8 +242,42 @@ fun WaterReminderSection() {
                     )*/
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Drink now", color = Color.White)
+
+                    Text(
+                        text = "Set water reminder (every ${reminderInterval.toInt()} hours)",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+                    )
+
+                    Slider(
+                        value = reminderInterval,
+                        onValueChange = { reminderInterval = it },
+                        valueRange = 1f..6f,
+                        steps = 4,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Button(onClick = {
+                        scheduleWaterReminder(context, reminderInterval.toLong())
+                    }) {
+                        Text("Set Water Reminder")
+                    }
                 }
             }
         }
     }
+}
+
+fun scheduleWaterReminder(context: Context, intervalHours: Long) {
+    val workRequest = PeriodicWorkRequestBuilder<WaterReminderWorker>(intervalHours, TimeUnit.HOURS)
+        .setInitialDelay(intervalHours, TimeUnit.HOURS)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "WaterReminder",
+        ExistingPeriodicWorkPolicy.REPLACE,
+        workRequest
+    )
 }

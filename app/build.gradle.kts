@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
 
 kapt {

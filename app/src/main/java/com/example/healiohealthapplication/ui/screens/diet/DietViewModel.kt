@@ -1,13 +1,18 @@
 package com.example.healiohealthapplication.ui.screens.diet
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.healiohealthapplication.data.models.Diet
 import com.example.healiohealthapplication.data.repository.DietRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,4 +49,5 @@ class DietViewModel @Inject constructor(
         val newDiet = current.copy(waterIntake = current.waterIntake + amount)
         updateDiet(userId, newDiet)
     }
+
 }
