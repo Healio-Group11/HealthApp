@@ -105,13 +105,14 @@ fun MedicineListContent(medicines: List<Medicine>, navController: NavController)
                     .padding(8.dp)
                     .clickable {
                         try {
+                            val id = medicine.id?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "0"
                             val name = medicine.name?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "Unknown"
                             val description = medicine.description?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No description"
                             val schedule = medicine.schedule?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No schedule"
                             val amount = medicine.amount?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No amount"
                             val duration = medicine.duration?.let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) } ?: "No duration"
 
-                            navController.navigate("medicine_detail/$name/$description/$schedule/$amount/$duration")
+                            navController.navigate("medicine_detail/$id/$name/$description/$schedule/$amount/$duration")
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
