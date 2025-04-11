@@ -20,16 +20,17 @@ class MedicineViewModel @Inject constructor(
     private val _medicine = MutableStateFlow<Medicine?>(null) // To store a single medicine
     val medicine: StateFlow<Medicine?> = _medicine
 
-    private var userId: String = ""
+    private val _userId = MutableStateFlow("")
+    val userId: StateFlow<String> = _userId
 
     fun setUserId(id: String) {
-        userId = id
+        _userId.value = id
     }
 
     // Fetch a single medicine by ID
-    fun getMedicineById(medicineId: String) {
-        if (userId.isNotEmpty()) {
-            repository.getMedicineById(userId, medicineId) { medicine ->
+    fun getMedicineById(id: String, medicineId: String) {
+        if (id.isNotEmpty()) {
+            repository.getMedicineById(id, medicineId) { medicine ->
                 _medicine.value = medicine // Update state flow
             }
         } else {
@@ -39,8 +40,9 @@ class MedicineViewModel @Inject constructor(
 
     // Add a new medicine
     fun addMedicine(medicine: Medicine, onComplete: (Boolean) -> Unit) {
-        if (userId.isNotEmpty()) {
-            repository.addMedicine(userId, medicine) { success ->
+        val uid = _userId.value
+        if (uid.isNotEmpty()) {
+            repository.addMedicine(uid, medicine) { success ->
                 if (success) {
                     fetchMedicines() // Refresh after adding
                 }
@@ -53,8 +55,9 @@ class MedicineViewModel @Inject constructor(
 
     // Update existing medicine
     fun updateMedicine(medicine: Medicine, onComplete: (Boolean) -> Unit) {
-        if (userId.isNotEmpty()) {
-            repository.updateMedicine(userId, medicine) { success ->
+        val uid = _userId.value
+        if (uid.isNotEmpty()) {
+            repository.updateMedicine(uid, medicine) { success ->
                 onComplete(success)
             }
         } else {
@@ -65,8 +68,9 @@ class MedicineViewModel @Inject constructor(
 
     // Delete a medicine
     fun deleteMedicine(medicineId: String, onComplete: (Boolean) -> Unit) {
-        if (userId.isNotEmpty()) {
-            repository.deleteMedicine(userId, medicineId) { success ->
+        val uid = _userId.value
+        if (uid.isNotEmpty()) {
+            repository.deleteMedicine(uid, medicineId) { success ->
                 if (success) {
                     fetchMedicines() // Refresh after deletion
                 }
@@ -79,8 +83,9 @@ class MedicineViewModel @Inject constructor(
 
     // Fetch all medicines
     fun fetchMedicines() {
-        if (userId.isNotEmpty()) {
-            repository.getMedicines(userId) { fetchedMedicines ->
+        val uid = _userId.value
+        if (uid.isNotEmpty()) {
+            repository.getMedicines(uid) { fetchedMedicines ->
                 _medicines.value = fetchedMedicines
             }
         }

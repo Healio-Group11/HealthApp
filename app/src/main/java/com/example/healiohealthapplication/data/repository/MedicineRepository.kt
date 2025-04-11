@@ -49,6 +49,7 @@ class MedicineRepository @Inject constructor() {
                 if (document.exists()) {
                     val medicine = document.toObject<Medicine>()
                     onResult(medicine)
+                    Log.d("MedicineRepository", "Medicine fetched by id")
                 } else {
                     onResult(null) // Medicine not found
                 }
@@ -56,7 +57,7 @@ class MedicineRepository @Inject constructor() {
             .addOnFailureListener {
                 onResult(null) // Return null in case of failure
                 // Optionally log the error for better debugging
-                // Log.e("MedicineRepository", "Failed to fetch medicine", it)
+                Log.e("MedicineRepository", "Failed to fetch medicine by id", it)
             }
     }
 
@@ -65,11 +66,14 @@ class MedicineRepository @Inject constructor() {
         db.collection("users").document(userId)
             .collection("medicine").document(medicine.id ?: "")
             .set(medicine)
-            .addOnSuccessListener { onResult(true) }
+            .addOnSuccessListener {
+                onResult(true)
+                Log.d("MedicineRepository", "Medicine updated in firestore")
+            }
             .addOnFailureListener {
                 onResult(false)
                 // Optionally log the error for better debugging
-                // Log.e("MedicineRepository", "Failed to update medicine", it)
+                Log.e("MedicineRepository", "Failed to update medicine", it)
             }
     }
 
@@ -78,11 +82,14 @@ class MedicineRepository @Inject constructor() {
         db.collection("users").document(userId)
             .collection("medicine").document(medicineId)
             .delete()
-            .addOnSuccessListener { onResult(true) }
+            .addOnSuccessListener {
+                onResult(true)
+                Log.d("MedicineRepository", "Medicine deleted from firestore")
+            }
             .addOnFailureListener {
                 onResult(false)
                 // Optionally log the error for better debugging
-                // Log.e("MedicineRepository", "Failed to delete medicine", it)
+                Log.e("MedicineRepository", "Failed to delete medicine", it)
             }
     }
 }
