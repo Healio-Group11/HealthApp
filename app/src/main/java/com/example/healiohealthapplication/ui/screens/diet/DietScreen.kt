@@ -45,7 +45,19 @@ import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.Green142
 import androidx.compose.runtime.setValue
 import android.content.Context
+import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.TextStyle
 import androidx.work.*
+import com.example.healiohealthapplication.data.models.FoodProduct
+import com.example.healiohealthapplication.ui.screens.food.FoodSearchViewModel
 import com.example.healiohealthapplication.worker.WaterReminderWorker
 import java.util.concurrent.TimeUnit
 
@@ -53,20 +65,30 @@ import java.util.concurrent.TimeUnit
 fun DietScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: DietViewModel = hiltViewModel(),
-    sharedViewModel: SharedViewModel = hiltViewModel()
+    sharedViewModel: SharedViewModel,
+    dietViewModel: DietViewModel = hiltViewModel(),
+    foodSearchViewModel: FoodSearchViewModel = hiltViewModel()
 ) {
 
-    val dietState = viewModel.diet.collectAsState().value
-
+    // Current macros from dietState
+    val dietState = dietViewModel.diet.collectAsState().value
     val userData by sharedViewModel.userData.collectAsState()
-
     val userId = userData?.id
 
+    Log.d("DietScreen", "UserData in DietScreen: $userData")
+
+    Log.d("userId", "User -> Id: ${userId}")
+
+
+    // Local UI state for the search field and selected food
+    var query by remember { mutableStateOf("") }
+    var selectedFood by remember { mutableStateOf<FoodProduct?>(null) }
+    val foodResults by foodSearchViewModel.foodResults.collectAsState()
+
     // Load diet data on screen start
-    LaunchedEffect(key1 = userId) {
+    LaunchedEffect(userId) {
         if (userId != null) {
-            viewModel.loadDietData(userId)
+            dietViewModel.loadDietData(userId)
         }
     }
 
@@ -132,6 +154,67 @@ fun DietScreen(
             MacroRow(label = "Fat", value = dietState.fat.toString(), unit = "")
             Spacer(modifier = Modifier.height(16.dp))
             MacroRow(label = "Protein", value = dietState.protein.toString(), unit = "")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = if (selectedFood != null) selectedFood!!.productName ?: query else query,
+                    onValueChange = { newValue ->
+                        query = newValue
+                        // Clear any previous selection if the text is edited
+                        selectedFood = null
+                        if (query.length >= 3) {
+                            foodSearchViewModel.searchFood(query)
+                        }
+                    },
+                    label = { Text("Consumed Food") },
+                    textStyle = androidx.compose.ui.text.TextStyle(color = Color.Black),
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = {
+                        // Only add if a food has been selected
+                        if (selectedFood != null && userId != null) {
+                            addFoodToDiet(selectedFood!!, userId, dietViewModel)
+                            // Reset search state
+                            query = ""
+                            selectedFood = null
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Green142)
+                ) {
+                    Text(text = "Add", color = Color.White)
+                }
+            }
+            // --- End of Input Row ---
+
+            // Show suggestions if query is not empty and no selection has been made
+            if (query.length >= 3 && selectedFood == null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 0.dp, max = 300.dp)
+                ) {
+                    items(items = foodResults) { food ->
+                        Text(
+                            text = food.productName ?: "Unknown",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    // Set the selected food and update text field accordingly
+                                    selectedFood = food
+                                    query = food.productName ?: ""
+                                }
+                                .padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(36.dp))
 
@@ -150,6 +233,41 @@ fun DietScreen(
             )
         }
     }
+}
+
+
+/**
+ * Adds the selected food's nutritional values (assumed for 100g serving) to the current diet.
+ */
+private fun addFoodToDiet(
+    food: FoodProduct,
+    userId: String,
+    dietViewModel: DietViewModel
+) {
+    // Retrieve the current diet
+    val currentDiet = dietViewModel.diet.value
+
+    // Calculate the added values (assumed for a 100g serving)
+    val addedCarbs = food.nutriments?.carbsPer100g?.toInt() ?: 0
+    val addedFat = food.nutriments?.fatPer100g?.toInt() ?: 0
+    val addedProtein = food.nutriments?.proteinPer100g?.toInt() ?: 0
+
+    // Debug prints before updating
+    Log.d("DietUpdate", "Current Diet -> Net Carbs: ${currentDiet.netCarbs}, Fat: ${currentDiet.fat}, Protein: ${currentDiet.protein}")
+    Log.d("DietUpdate", "Nutrients to add -> Carbs: $addedCarbs, Fat: $addedFat, Protein: $addedProtein")
+
+    // Calculate updated diet values
+    val updatedDiet = currentDiet.copy(
+        netCarbs = currentDiet.netCarbs + addedCarbs,
+        fat = currentDiet.fat + addedFat,
+        protein = currentDiet.protein + addedProtein
+    )
+
+    // Debug print for new diet values
+    Log.d("DietUpdate", "Updated Diet -> Net Carbs: ${updatedDiet.netCarbs}, Fat: ${updatedDiet.fat}, Protein: ${updatedDiet.protein}")
+
+    // Update the diet using the ViewModel
+    dietViewModel.updateDiet(userId, updatedDiet)
 }
 
 @Composable
