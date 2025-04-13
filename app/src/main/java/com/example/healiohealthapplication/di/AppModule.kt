@@ -1,6 +1,9 @@
 package com.example.healiohealthapplication.di
 
 import android.content.Context
+import com.example.healiohealthapplication.data.remote.FoodApi
+import com.example.healiohealthapplication.data.remote.RetrofitInstance
+import com.example.healiohealthapplication.data.remote.RetrofitInstance.foodApi
 import com.example.healiohealthapplication.utils.StepCounter
 import com.example.healiohealthapplication.utils.StepPrefs
 import dagger.Module
@@ -25,4 +28,9 @@ object AppModule {
     fun provideStepCounter(@ApplicationContext context: Context): StepCounter {
         return StepCounter(context)
     }
+
+    @Singleton
+    @Provides
+    fun provideFoodApi(): FoodApi = foodApi
+
 }

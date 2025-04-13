@@ -76,6 +76,26 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Retrofit and Gson
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Room
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
+    // optionally, for Kotlin coroutines support
+    implementation("androidx.room:room-ktx:2.5.0")
+
+    // Hilt (if not already set up)
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-compiler:2.44")
+
+    // Other dependencies (Compose, lifecycle, etc.)
+    implementation("androidx.compose.ui:ui:1.3.0")
+    implementation("androidx.compose.material3:material3:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    implementation("androidx.activity:activity-compose:1.6.0")
 }
 
 kapt {

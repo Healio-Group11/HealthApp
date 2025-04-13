@@ -229,9 +229,20 @@ fun WaterReminderSection() {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Button with glass icon
                 Button(
-                    onClick = { /* TODO: handle click */ },
+                    onClick = {
+                        scheduleOneTimeWaterReminder(context, 1000) // Delay 1 second for testing
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF404A48))
+                ) {
+                    Text(text = "Test Notification", color = Color.White)
+                }
+
+                // Button with glass icon
+                /*Button(
+                    onClick = { /* TODO: handle click */
+                        scheduleWaterReminder(context, 100000)
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF404A48))
                 ) {
                     // Glass icon
@@ -240,7 +251,7 @@ fun WaterReminderSection() {
                         contentDescription = "Glass icon",
                         tint = Color.White
                     )*/
-                    Spacer(modifier = Modifier.width(8.dp))
+                    /*Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Drink now", color = Color.White)
 
                     Text(
@@ -263,8 +274,8 @@ fun WaterReminderSection() {
                         scheduleWaterReminder(context, reminderInterval.toLong())
                     }) {
                         Text("Set Water Reminder")
-                    }
-                }
+                    }*/
+                }*/
             }
         }
     }
@@ -278,6 +289,18 @@ fun scheduleWaterReminder(context: Context, intervalHours: Long) {
     WorkManager.getInstance(context).enqueueUniquePeriodicWork(
         "WaterReminder",
         ExistingPeriodicWorkPolicy.REPLACE,
+        workRequest
+    )
+}
+
+fun scheduleOneTimeWaterReminder(context: Context, delayMillis: Long) {
+    val workRequest = OneTimeWorkRequestBuilder<WaterReminderWorker>()
+        .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniqueWork(
+        "WaterReminderTest",
+        ExistingWorkPolicy.REPLACE,
         workRequest
     )
 }
