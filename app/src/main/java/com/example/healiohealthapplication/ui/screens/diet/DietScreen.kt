@@ -48,12 +48,19 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.TextStyle
 import androidx.work.*
 import com.example.healiohealthapplication.data.models.FoodProduct
@@ -306,98 +313,118 @@ fun MacroRow(label: String, value: String, unit: String) {
 
 @Composable
 fun WaterReminderSection() {
-    var reminderInterval by remember { mutableStateOf(2f) } // Default 2 hours
     val context = LocalContext.current
-    
+
+    // Local states
+    var reminderOn by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedInterval by remember { mutableStateOf(2) } // default 2 hours
+    val reminderOptions = listOf(1, 2, 3, 4, 5, 6)
+
+    // Automatically schedule water reminder when reminder is on and interval changes.
+    LaunchedEffect(reminderOn, selectedInterval) {
+        if (reminderOn) {
+            scheduleWaterReminder(context, selectedInterval.toLong())
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp)
-            .background(
-                color = Green142,
-                shape = RoundedCornerShape(24.dp)
-            ),
-        contentAlignment = Alignment.Center
+            .height(140.dp)   // Set overall fixed height for consistency.
+            .background(color = Color.White, shape = RoundedCornerShape(24.dp))
+            .padding(0.dp),
+        contentAlignment = Alignment.TopStart
     ) {
-        // Row for icon, text, and button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Water bottle icon (placeholder)
-            /*Image(
-                painter = painterResource(id = R.drawable.ic_water_bottle), // Replace with your resource
-                contentDescription = "Water bottle",
-                modifier = Modifier.size(60.dp),
-                contentScale = ContentScale.Fit
-            )*/
-
-            // Column with text and button
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            // Row 1: Fixed reminder text box + Switch.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),   // Fixed row height.
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Drink enough water\nStay hydrated",
-                    style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = {
-                        scheduleOneTimeWaterReminder(context, 1000) // Delay 1 second for testing
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF404A48))
+                // Fixed-size Box for reminder text.
+                Box(
+                    modifier = Modifier
+                        .width(280.dp)   // fixed width
+                        .height(60.dp)   // fixed height matching row
+                        .border(width = 2.dp, color = Green142, shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    Text(text = "Test Notification", color = Color.White)
-                }
-
-                // Button with glass icon
-                /*Button(
-                    onClick = { /* TODO: handle click */
-                        scheduleWaterReminder(context, 100000)
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF404A48))
-                ) {
-                    // Glass icon
-                    /*Icon(
-                        painter = painterResource(id = R.drawable.ic_glass), // Replace with your resource
-                        contentDescription = "Glass icon",
-                        tint = Color.White
-                    )*/
-                    /*Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Drink now", color = Color.White)
-
                     Text(
-                        text = "Set water reminder (every ${reminderInterval.toInt()} hours)",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+                        text = if (reminderOn) "Water Reminder: On (${selectedInterval}h)" else "Water Reminder: Off",
+                        style = MaterialTheme.typography.titleLarge.copy(color = Color.Black),
+                        maxLines = 1
                     )
-
-                    Slider(
-                        value = reminderInterval,
-                        onValueChange = { reminderInterval = it },
-                        valueRange = 1f..6f,
-                        steps = 4,
-                        modifier = Modifier.fillMaxWidth()
+                }
+                // Switch, scaled up, with Green142 colors.
+                Switch(
+                    checked = reminderOn,
+                    onCheckedChange = { reminderOn = it },
+                    modifier = Modifier.scale(1.3f),
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Green142,
+                        checkedTrackColor = Green142.copy(alpha = 0.5f),
+                        uncheckedThumbColor = Green142,
+                        uncheckedTrackColor = Green142.copy(alpha = 0.5f)
                     )
+                )
+            }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                    Button(onClick = {
-                        scheduleWaterReminder(context, reminderInterval.toLong())
-                    }) {
-                        Text("Set Water Reminder")
-                    }*/
-                }*/
+            // Row 2: Dropdown button for selecting the reminder interval.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),  // Fixed row height.
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box {
+                    OutlinedButton(
+                        onClick = { expanded = true },
+                        modifier = Modifier
+                            .height(50.dp)
+                            .widthIn(min = 200.dp),  // ensure a minimum width
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = Green142,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Every $selectedInterval h",
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        reminderOptions.forEach { hour ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    selectedInterval = hour
+                                    expanded = false
+                                },
+                                text = { Text("$hour h") }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
+
 
 fun scheduleWaterReminder(context: Context, intervalHours: Long) {
     val workRequest = PeriodicWorkRequestBuilder<WaterReminderWorker>(intervalHours, TimeUnit.HOURS)
