@@ -26,7 +26,7 @@
     <string name="user_screen_updating_data_error_message_text">Failed to update user data</string>
     <string name="user_screen_card_component_title">User Information</string>
 
-    -- Edit user/profile screen - -
+    -- Edit user/profile screen --
     <string name="edit_user_top_nav_bar_title">Profile</string>
     <string name="edit_user_screen_title">Your information</string>
     <string name="edit_user_screen_outlined_text_field_label_age">age</string>
@@ -36,7 +36,18 @@
     <string name="edit_user_screen_gender_dropdown_component_label">gender</string>
     <string name="edit_user_screen_gender_dropdown_component_icon_description">arrow down icon for select gender</string>
 
-    -- Components
+    -- Sign Up Screen --
+    <string name="sign_up_screen_title">Let\'s help you meet your goal</string>
+    <string name="sign_up_screen_outlined_text_field_label_email">Email</string>
+    <string name="sign_up_screen_outlined_text_field_label_password">Password</string>
+    <string name="sign_up_screen_password_requirements_text">• Password must contain at least 6 characters</string>
+    <string name="sign_up_screen_outlined_text_field_icon_desc_email">email icon</string>
+    <string name="sign_up_screen_outlined_text_field_icon_desc_password">lock icon</string>
+    <string name="sign_up_screen_submit_button_text">Sign Up</string>
+    <string name="sign_up_screen_change_page_text">Already have an account?</string>
+    <string name="sign_up_screen_change_page_link_text">Log in</string>
+
+    -- Components --
     <string name="error_card_icon_description">Dismiss</string>
     <string name="next">Next</string>
 </resources>
