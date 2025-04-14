@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.medicine
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,15 +15,24 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.data.models.Medicine
+import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
+import kotlinx.coroutines.time.delay
 
 @Composable
 fun EditMedicineScreen(
     medicineId: String,
     navController: NavController,
-    viewModel: MedicineViewModel = hiltViewModel()
+    viewModel: MedicineViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel
 ) {
-    // Fetch the medicine from ViewModel
-    viewModel.getMedicineById(medicineId)
+    val userData by sharedViewModel.userData.collectAsState()
+
+    LaunchedEffect(userData?.id) {
+        userData?.id?.let { id ->
+            viewModel.setUserId(id)
+            viewModel.getMedicineById(id, medicineId)
+        }
+    }
 
     // Get the medicine details from the ViewModel state
     val medicine = viewModel.medicine.collectAsState().value

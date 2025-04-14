@@ -13,9 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
@@ -182,7 +180,8 @@ fun HealioNavigation() {
                 schedule = schedule,
                 amount = amount,
                 duration = duration,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
         }
 
@@ -196,19 +195,24 @@ fun HealioNavigation() {
 
         //Edit medicine
         composable(
-            "edit_medicine/{medicineId}",
-            arguments = listOf(navArgument("medicineId") { type = NavType.StringType })
+            "edit_medicine/{userId}/{medicineId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType },
+                navArgument("medicineId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
             val medicineViewModel: MedicineViewModel = hiltViewModel()
-            medicineViewModel.getMedicineById(medicineId)
+            medicineViewModel.getMedicineById(userId, medicineId)
 
             val medicine = medicineViewModel.medicine.collectAsState().value
 
             if (medicine != null) {
                 EditMedicineScreen(
                     medicineId = medicineId,
-                    navController = navController
+                    navController = navController,
+                    sharedViewModel = sharedViewModel
                 )
             } else {
                 // Handle error state or loading state
