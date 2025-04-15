@@ -58,8 +58,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.TextStyle
 import androidx.work.*
@@ -67,6 +69,7 @@ import com.example.healiohealthapplication.data.models.FoodProduct
 import com.example.healiohealthapplication.ui.screens.food.FoodSearchViewModel
 import com.example.healiohealthapplication.worker.WaterReminderWorker
 import java.util.concurrent.TimeUnit
+
 
 @Composable
 fun DietScreen(
@@ -163,6 +166,7 @@ fun DietScreen(
             MacroRow(label = "Protein", value = dietState.protein.toString(), unit = "")
             Spacer(modifier = Modifier.height(16.dp))
 
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -171,32 +175,43 @@ fun DietScreen(
                     value = if (selectedFood != null) selectedFood!!.productName ?: query else query,
                     onValueChange = { newValue ->
                         query = newValue
-                        // Clear any previous selection if the text is edited
+                        // Clear previous selection if text changes
                         selectedFood = null
                         if (query.length >= 3) {
                             foodSearchViewModel.searchFood(query)
                         }
                     },
                     label = { Text("Consumed Food") },
-                    textStyle = androidx.compose.ui.text.TextStyle(color = Color.Black),
-                    modifier = Modifier.weight(1f)
+                    textStyle = TextStyle(color = Color.Black),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Green142,
+                        unfocusedBorderColor = Green142,
+                        cursorColor = Green142
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp) // Fixed height for consistency
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
-                        // Only add if a food has been selected
                         if (selectedFood != null && userId != null) {
                             addFoodToDiet(selectedFood!!, userId, dietViewModel)
-                            // Reset search state
                             query = ""
                             selectedFood = null
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Green142)
+                    colors = ButtonDefaults.buttonColors(containerColor = Green142),
+                    modifier = Modifier.height(56.dp) // Same fixed height as the text field
                 ) {
-                    Text(text = "Add", color = Color.White)
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Consumed Food",
+                        tint = Color.White
+                    )
                 }
             }
+
             // --- End of Input Row ---
 
             // Show suggestions if query is not empty and no selection has been made
