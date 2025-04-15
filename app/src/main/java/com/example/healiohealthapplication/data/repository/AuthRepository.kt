@@ -7,14 +7,28 @@ class AuthRepository @Inject constructor() {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun register(email: String, password: String, onResult: (Boolean) -> Unit) {
+    fun register(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.isSuccessful) }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    val errorMessage = task.exception?.localizedMessage ?: "Unknown error occurred."
+                    onResult(false, errorMessage)
+                }
+            }
     }
 
-    fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
+    fun login(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.isSuccessful) }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    val errorMessage = task.exception?.localizedMessage ?: "Login failed. Please try again."
+                    onResult(false, errorMessage)
+                }
+            }
     }
 
     fun logout() {

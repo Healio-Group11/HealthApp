@@ -20,15 +20,21 @@ class LoginViewModel @Inject constructor(
     // -- states for current ui screen --
     var currentEmail by mutableStateOf("")
     var currentPassword by mutableStateOf("")
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
+    var showError by mutableStateOf(false)
 
     fun login(navController: NavController, email: String, password: String, onLoginSuccess: (String) -> Unit) {
-        authRepository.login(email, password) { success ->
+        authRepository.login(email, password) { success, error ->
             if (success) {
                 authRepository.getCurrentUserId()?.let { userId ->
                     onLoginSuccess(userId)
                     navController.navigate(Routes.HOME)
                     stepCounter.startListening()
                 }
+            } else {
+                errorMessage = error ?: "Registration failed."
+                showError = true
             }
         }
     }
