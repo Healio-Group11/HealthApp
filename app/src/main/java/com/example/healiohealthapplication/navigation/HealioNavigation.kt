@@ -38,7 +38,6 @@ import com.example.healiohealthapplication.ui.screens.user.UserViewModel
 import com.example.healiohealthapplication.ui.screens.welcome.WelcomeScreen
 import com.example.healiohealthapplication.ui.screens.workout.AddWorkoutScreen
 import com.example.healiohealthapplication.ui.screens.workout.EditWorkoutScreen
-import com.example.healiohealthapplication.ui.screens.workout.ProgressScreen
 import com.example.healiohealthapplication.ui.screens.workout.WorkoutScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -118,12 +117,6 @@ fun HealioNavigation() {
             }
         }
 
-
-
-        // Viewing progress
-        composable(route = Routes.VIEW_PROGRESS) {
-            ProgressScreen(navController, workouts = listOf()) // Pass empty list or real data
-        }
 
         // Adding new workout
         composable(
