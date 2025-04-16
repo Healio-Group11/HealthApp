@@ -27,20 +27,20 @@ class HomeScreenViewModel @Inject constructor(
         private set
 
     // --- steps state ---
-    private val _stepCount = MutableStateFlow<Steps?>(null)
-    val stepCount: StateFlow<Steps?> = _stepCount
+    // private val _stepCount = MutableStateFlow<Steps?>(null)
+    // val stepCount: StateFlow<Steps?> = _stepCount
 
     fun toggleExpanded() {
         expanded = !expanded
     }
 
-    fun loadSteps(userId: String) {
+    /*fun loadSteps(userId: String) {
         viewModelScope.launch {
             stepsRepository.getStepData(userId) { data ->
                 _stepCount.value = data
             }
         }
-    }
+    }*/
 
     fun logout(navController: NavController) {
         authRepository.logout()

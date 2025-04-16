@@ -22,7 +22,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideStepCounter(@ApplicationContext context: Context): StepCounter {
-        return StepCounter(context)
+    fun provideStepCounter(
+        @ApplicationContext context: Context,
+        stepPrefs: StepPrefs
+    ): StepCounter {
+        return StepCounter(context, stepPrefs)
     }
 }

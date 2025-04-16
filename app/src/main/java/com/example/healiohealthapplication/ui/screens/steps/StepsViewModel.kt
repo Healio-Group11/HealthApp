@@ -1,6 +1,5 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

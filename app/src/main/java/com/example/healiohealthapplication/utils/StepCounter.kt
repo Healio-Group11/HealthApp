@@ -12,7 +12,10 @@ import javax.inject.Inject
 import kotlin.math.sqrt
 
 // tracks steps using the accelerometer or android step counter sensor depending on what the phone has
-class StepCounter @Inject constructor(@ApplicationContext context: Context) : SensorEventListener { // implements the sensor event listener (context is the way the sensor is accessed)
+class StepCounter @Inject constructor(
+    @ApplicationContext context: Context,
+    private val stepPrefs: StepPrefs
+) : SensorEventListener { // implements the sensor event listener (context is the way the sensor is accessed)
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var stepDetector: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -27,7 +30,7 @@ class StepCounter @Inject constructor(@ApplicationContext context: Context) : Se
     private val stepDelay = 300L // milliseconds between valid steps
 
     fun startListening() {
-        Log.d("StepCounter", "StepCounter startListening has been called.")
+        stepPrefs.setStartUpBoolean(true)
         if (stepDetector == null) {
             if (accelerometer != null) {
                 accelerometer?.let {
