@@ -160,15 +160,6 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Displaying progress using LinearProgressIndicator
-            LinearProgressIndicator(
-                progress = workout.progress / 100f,  // Assuming progress is a percentage (0-100)
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             // Timer functionality for workout progress tracking
             Row(
                 verticalAlignment = Alignment.CenterVertically,
