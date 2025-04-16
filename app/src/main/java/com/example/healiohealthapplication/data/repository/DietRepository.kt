@@ -10,7 +10,7 @@ class DietRepository @Inject constructor() {
     private val db = FirebaseFirestore.getInstance()
 
     fun saveDietData(userId: String, diet: Diet, onResult: (Boolean) -> Unit) {
-        db.collection("diets")
+        db.collection("users")
             .document(userId)
             .set(diet)
             .addOnSuccessListener {
@@ -24,7 +24,7 @@ class DietRepository @Inject constructor() {
     }
 
     fun getDietData(userId: String, onResult: (Diet?) -> Unit) {
-        db.collection("diets")
+        db.collection("users")
             .document(userId)
             .get()
             .addOnSuccessListener { document ->
