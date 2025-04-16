@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -20,7 +19,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -55,13 +52,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.TextStyle
 import androidx.work.*
@@ -84,6 +79,7 @@ fun DietScreen(
     val dietState = dietViewModel.diet.collectAsState().value
     val userData by sharedViewModel.userData.collectAsState()
     val userId = userData?.id
+    val userName = userData?.email?.substringBefore("@")?.take(20)
 
     Log.d("DietScreen", "UserData in DietScreen: $userData")
 
@@ -123,10 +119,12 @@ fun DietScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Left: User name
-                Text(
-                    text = "myfitnesspal",  //TODO: Get the actual user name
-                    style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
-                )
+                if (userName != null) {
+                    Text(
+                        text = userName,
+                        style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
+                    )
+                }
 
                 // Right: Premium label + Notification icon
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -136,15 +134,6 @@ fun DietScreen(
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
-
-                    // Notification Icon button
-                    IconButton(onClick = { /* TODO: Handle notification click */ }) {
-                        /*Icon(
-                            painter = painterResource(id = R.drawable.ic_notifications),
-                            contentDescription = "Notifications",
-                            tint = Color.Gray
-                        )*/
-                    }
                 }
             }
 
@@ -190,7 +179,7 @@ fun DietScreen(
                     ),
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp) // Fixed height for consistency
+                        .height(56.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
@@ -202,7 +191,7 @@ fun DietScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Green142),
-                    modifier = Modifier.height(56.dp) // Same fixed height as the text field
+                    modifier = Modifier.height(56.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -453,7 +442,7 @@ fun scheduleWaterReminder(context: Context, intervalHours: Long) {
     )
 }
 
-fun scheduleOneTimeWaterReminder(context: Context, delayMillis: Long) {
+/*fun scheduleOneTimeWaterReminder(context: Context, delayMillis: Long) {
     val workRequest = OneTimeWorkRequestBuilder<WaterReminderWorker>()
         .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
         .build()
@@ -463,4 +452,4 @@ fun scheduleOneTimeWaterReminder(context: Context, delayMillis: Long) {
         ExistingWorkPolicy.REPLACE,
         workRequest
     )
-}
+}*/
