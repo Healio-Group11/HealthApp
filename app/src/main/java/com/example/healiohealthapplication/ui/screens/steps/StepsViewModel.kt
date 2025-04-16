@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healiohealthapplication.data.models.Steps
 import com.example.healiohealthapplication.data.repository.StepsRepository
+import com.example.healiohealthapplication.utils.Permissions
 import com.example.healiohealthapplication.utils.StepCounter
 import com.example.healiohealthapplication.utils.StepPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,9 +22,11 @@ import javax.inject.Inject
 class StepsViewModel @Inject constructor(
     private val firestoreRepository: StepsRepository,
     private val stepPrefs: StepPrefs,
-    private val stepCounter: StepCounter
+    private val stepCounter: StepCounter,
+    private val permissions: Permissions
 ) : ViewModel() {
     val isStepTrackingSupported = stepCounter.isStepTrackingSupported
+    val currentlyUsedSensor = stepCounter.currentlyUsedSensor
     var currentStepGoal by mutableStateOf<Int?>(0)
     private var lastStepCount = 0
     var userId: String? = null
@@ -34,6 +37,9 @@ class StepsViewModel @Inject constructor(
 
     private val _progress = MutableStateFlow(0f)
     val progress: StateFlow<Float> = _progress
+
+    private val _hasPermission = MutableStateFlow(false)
+    val hasPermission: StateFlow<Boolean> = _hasPermission
 
     var showError by mutableStateOf(true)
 
@@ -132,5 +138,16 @@ class StepsViewModel @Inject constructor(
     private fun getTodayDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date())
+    }
+
+    fun checkStepPermission() {
+        val usingStepDetector = currentlyUsedSensor.value == 1
+        _hasPermission.value = if (usingStepDetector) {
+            val granted = permissions.hasStepDetectorPermission()
+            if (!granted) stepCounter.isStepTrackingSupported.value = false
+            granted
+        } else {
+            true
+        }
     }
 }

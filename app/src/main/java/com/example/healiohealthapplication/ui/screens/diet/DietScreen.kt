@@ -104,144 +104,149 @@ fun DietScreen(
         OverlappingCircle()
 
         // Main content
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(36.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Left: User name
-                if (userName != null) {
-                    Text(
-                        text = userName,
-                        style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
-                    )
-                }
-
-                // Right: Premium label + Notification icon
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Premium \uD83D\uDE0A",
-                        style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray)
-                    )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-                }
+            item {
+                Spacer(modifier = Modifier.height(36.dp))
             }
-
-            Spacer(modifier = Modifier.height(36.dp))
-
-            // 2) "Today" Title
-            Text(
-                text = "Today",
-                style = MaterialTheme.typography.titleLarge.copy(color = Color.Black)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 3) Macros in separate rows (one per row)
-            MacroRow(label = "Net Carbs", value = dietState.netCarbs.toString(), unit = "")
-            Spacer(modifier = Modifier.height(16.dp))
-            MacroRow(label = "Fat", value = dietState.fat.toString(), unit = "")
-            Spacer(modifier = Modifier.height(16.dp))
-            MacroRow(label = "Protein", value = dietState.protein.toString(), unit = "")
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    value = if (selectedFood != null) selectedFood!!.productName ?: query else query,
-                    onValueChange = { newValue ->
-                        query = newValue
-                        // Clear previous selection if text changes
-                        selectedFood = null
-                        if (query.length >= 3) {
-                            foodSearchViewModel.searchFood(query)
-                        }
-                    },
-                    label = { Text("Consumed Food") },
-                    textStyle = TextStyle(color = Color.Black),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Green142,
-                        unfocusedBorderColor = Green142,
-                        cursorColor = Green142
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(56.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = {
-                        if (selectedFood != null && userId != null) {
-                            addFoodToDiet(selectedFood!!, userId, dietViewModel)
-                            query = ""
-                            selectedFood = null
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Green142),
-                    modifier = Modifier.height(56.dp)
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Consumed Food",
-                        tint = Color.White
-                    )
-                }
-            }
-
-            // --- End of Input Row ---
-
-            // Show suggestions if query is not empty and no selection has been made
-            if (query.length >= 3 && selectedFood == null) {
-                Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 0.dp, max = 300.dp)
-                ) {
-                    items(items = foodResults) { food ->
+                    // Left: User name
+                    if (userName != null) {
                         Text(
-                            text = food.productName ?: "Unknown",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    // Set the selected food and update text field accordingly
-                                    selectedFood = food
-                                    query = food.productName ?: ""
-                                }
-                                .padding(vertical = 8.dp)
+                            text = userName,
+                            style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
+                        )
+                    }
+
+                    // Right: Premium label + Notification icon
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Premium \uD83D\uDE0A",
+                            style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray)
+                        )
+
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                }
+            }
+            item { Spacer(modifier = Modifier.height(36.dp)) }
+            // 2) "Today" Title
+            item {
+                Text(
+                    text = "Today",
+                    style = MaterialTheme.typography.titleLarge.copy(color = Color.Black)
+                )
+            }
+            item { Spacer(modifier = Modifier.height(12.dp)) }
+            // 3) Macros in separate rows (one per row)
+            item { MacroRow(label = "Net Carbs", value = dietState.netCarbs.toString(), unit = "") }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+            item { MacroRow(label = "Fat", value = dietState.fat.toString(), unit = "") }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+            item { MacroRow(label = "Protein", value = dietState.protein.toString(), unit = "") }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = if (selectedFood != null) selectedFood!!.productName
+                            ?: query else query,
+                        onValueChange = { newValue ->
+                            query = newValue
+                            // Clear previous selection if text changes
+                            selectedFood = null
+                            if (query.length >= 3) {
+                                foodSearchViewModel.searchFood(query)
+                            }
+                        },
+                        label = { Text("Consumed Food") },
+                        textStyle = TextStyle(color = Color.Black),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Green142,
+                            unfocusedBorderColor = Green142,
+                            cursorColor = Green142
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            if (selectedFood != null && userId != null) {
+                                addFoodToDiet(selectedFood!!, userId, dietViewModel)
+                                query = ""
+                                selectedFood = null
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Green142),
+                        modifier = Modifier.height(56.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Consumed Food",
+                            tint = Color.White
                         )
                     }
                 }
             }
+            // --- End of Input Row ---
 
-            Spacer(modifier = Modifier.height(36.dp))
+            // Show suggestions if query is not empty and no selection has been made
+            if (query.length >= 3 && selectedFood == null) {
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 0.dp, max = 300.dp)
+                    ) {
+                        items(items = foodResults) { food ->
+                            Text(
+                                text = food.productName ?: "Unknown",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        // Set the selected food and update text field accordingly
+                                        selectedFood = food
+                                        query = food.productName ?: ""
+                                    }
+                                    .padding(vertical = 8.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(36.dp)) }
 
             // 4) Water Reminder Section
-            WaterReminderSection()
+            item { WaterReminderSection() }
 
-            Spacer(modifier = Modifier.height(36.dp))
+            item { Spacer(modifier = Modifier.height(36.dp)) }
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_person_drinking_water),
-                contentDescription = "Person drinking water",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.Crop
-            )
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_person_drinking_water),
+                    contentDescription = "Person drinking water",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 }

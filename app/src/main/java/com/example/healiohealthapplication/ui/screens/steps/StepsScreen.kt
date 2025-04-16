@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.ErrorCard
+import com.example.healiohealthapplication.ui.components.PermissionRequester
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 
@@ -40,12 +42,27 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
         val stepsData by viewModel.stepsData.collectAsState()
         val progress by viewModel.progress.collectAsState()
         val isSupported by viewModel.isStepTrackingSupported.collectAsState()
+        val hasPermission by viewModel.hasPermission.collectAsState()
 
         LaunchedEffect(userData?.id) {
             userData?.id?.let { id ->
                 viewModel.userId = id
                 viewModel.getCurrentStepData(id)
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // contradicting errors here, fix
+            PermissionRequester(
+                permission = android.Manifest.permission.ACTIVITY_RECOGNITION,
+                shouldRequest = !hasPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q,
+                onGranted = {
+                    viewModel.isStepTrackingSupported.value = true
+                    userData?.id?.let { viewModel.getCurrentStepData(it) }
+                },
+                onDenied = {
+                    viewModel.isStepTrackingSupported.value = false
+                }
+            )
         }
 
         LazyColumn(

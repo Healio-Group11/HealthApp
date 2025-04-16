@@ -21,7 +21,7 @@ class StepCounter @Inject constructor(
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     val stepCount = MutableStateFlow(0)
-    private val currentlyUsedSensor = MutableStateFlow(0) // 1 = step detector, 2 = accelerometer
+    val currentlyUsedSensor = MutableStateFlow(0) // 1 = step detector, 2 = accelerometer
     val isStepTrackingSupported = MutableStateFlow(true)
 
     private var previousMagnitude = 0f
