@@ -13,9 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
@@ -40,7 +38,6 @@ import com.example.healiohealthapplication.ui.screens.user.UserViewModel
 import com.example.healiohealthapplication.ui.screens.welcome.WelcomeScreen
 import com.example.healiohealthapplication.ui.screens.workout.AddWorkoutScreen
 import com.example.healiohealthapplication.ui.screens.workout.EditWorkoutScreen
-import com.example.healiohealthapplication.ui.screens.workout.ProgressScreen
 import com.example.healiohealthapplication.ui.screens.workout.WorkoutScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -48,10 +45,8 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun HealioNavigation() {
     val navController = rememberNavController()
-    // TODO: are we supposed to declare each viewmodel here separately? is this bad practice?
     val sharedViewModel: SharedViewModel = hiltViewModel()
 
-    // TODO: change starting point. If user is logged in, start from homepage. If not, start from starting screen.
     // TODO: add error screen and loading screen functionality. if page is loading show loading screen, if page was loaded successfully show respective screen
     NavHost(
         navController = navController,
@@ -64,11 +59,11 @@ fun HealioNavigation() {
         }
         composable(route = Routes.LOGIN) {
             val loginScreenViewModel: LoginViewModel = hiltViewModel()
-            LoginScreen(navController, modifier = Modifier, loginScreenViewModel, sharedViewModel)
+            LoginScreen(navController, loginScreenViewModel, sharedViewModel)
         }
         composable(route = Routes.SIGNUP) {
             val signUpViewModel: SignUpViewModel = hiltViewModel()
-            SignUpScreen(navController, modifier = Modifier, signUpViewModel, sharedViewModel)
+            SignUpScreen(navController, signUpViewModel, sharedViewModel)
         }
         composable(route = Routes.USER) {
             val userViewModel: UserViewModel = hiltViewModel()
@@ -123,12 +118,6 @@ fun HealioNavigation() {
         }
 
 
-
-        // Viewing progress
-        composable(route = Routes.VIEW_PROGRESS) {
-            ProgressScreen(navController, workouts = listOf()) // Pass empty list or real data
-        }
-
         // Adding new workout
         composable(
             route = "add_workout/{uid}",
@@ -182,7 +171,8 @@ fun HealioNavigation() {
                 schedule = schedule,
                 amount = amount,
                 duration = duration,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
         }
 
@@ -196,19 +186,24 @@ fun HealioNavigation() {
 
         //Edit medicine
         composable(
-            "edit_medicine/{medicineId}",
-            arguments = listOf(navArgument("medicineId") { type = NavType.StringType })
+            "edit_medicine/{userId}/{medicineId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType },
+                navArgument("medicineId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
             val medicineViewModel: MedicineViewModel = hiltViewModel()
-            medicineViewModel.getMedicineById(medicineId)
+            medicineViewModel.getMedicineById(userId, medicineId)
 
             val medicine = medicineViewModel.medicine.collectAsState().value
 
             if (medicine != null) {
                 EditMedicineScreen(
                     medicineId = medicineId,
-                    navController = navController
+                    navController = navController,
+                    sharedViewModel = sharedViewModel
                 )
             } else {
                 // Handle error state or loading state

@@ -100,13 +100,7 @@ fun WorkoutScreen(
                     Text("Add New Workout", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 }
 
-                Button(
-                    onClick = { navController.navigate("view_progress/$uid") },
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
-                ) {
-                    Text("View Progress", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-                }
+
             } ?: run {
                 Text("Loading user data...", modifier = Modifier.align(Alignment.CenterHorizontally))
             }
@@ -163,15 +157,6 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Displaying progress using LinearProgressIndicator
-            LinearProgressIndicator(
-                progress = workout.progress / 100f,  // Assuming progress is a percentage (0-100)
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.primary
-            )
 
             Spacer(modifier = Modifier.height(12.dp))
 

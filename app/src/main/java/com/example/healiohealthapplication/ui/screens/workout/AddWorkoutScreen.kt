@@ -85,7 +85,6 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                         val newWorkout = Workout(
                             name = workoutName,
                             duration = workoutDuration,
-                            progress = 0, // Default progress value
                             id = userId // Using userId passed from the navigation route
                         )
 

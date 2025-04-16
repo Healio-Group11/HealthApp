@@ -38,19 +38,6 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun saveWorkout(userId: String, workout: Workout, onResult: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            try {
-                val success = workoutsRepository.saveWorkout(userId, workout)
-                onResult(success)
-                if (success) fetchWorkouts(userId)
-            } catch (e: Exception) {
-                _errorMessage.value = "Failed to save workout: ${e.message}"
-                onResult(false)
-            }
-        }
-    }
-
     fun deleteWorkout(userId: String, workoutId: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {

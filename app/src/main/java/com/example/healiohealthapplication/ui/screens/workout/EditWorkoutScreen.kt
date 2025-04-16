@@ -60,7 +60,7 @@ fun EditWorkoutScreen(
             Button(
                 onClick = {
                     isSaving = true
-                    val updatedWorkout = Workout(updatedWorkoutName, updatedDuration, 50) // Assuming 50 is the progress
+                    val updatedWorkout = Workout(updatedWorkoutName, updatedDuration)
                     viewModel.updateWorkout(userId, workoutId, updatedWorkout) { success ->
                         isSaving = false
                         if (success) {

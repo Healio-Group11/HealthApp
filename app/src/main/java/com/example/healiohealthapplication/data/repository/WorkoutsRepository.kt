@@ -10,16 +10,20 @@ class WorkoutsRepository @Inject constructor(private val db: FirebaseFirestore) 
     // Save a new workout
     suspend fun saveWorkout(userId: String, workout: Workout): Boolean {
         return try {
-            db.collection("users")
+            val newWorkoutRef = db.collection("users")
                 .document(userId)
                 .collection("workouts")
                 .add(workout)
                 .await()
+
+            // After adding, set the generated ID to the workout object
+            workout.id = newWorkoutRef.id  // Set the generated ID to workout object
             true // Successfully saved
         } catch (e: Exception) {
             false // Failed to save
         }
     }
+
 
     // Get all workouts for a user
     suspend fun getWorkouts(userId: String): List<Workout>? {
@@ -30,7 +34,9 @@ class WorkoutsRepository @Inject constructor(private val db: FirebaseFirestore) 
                 .get()
                 .await()
 
-            documents.mapNotNull { it.toObject(Workout::class.java) }
+            documents.mapNotNull { doc ->
+                val workout = doc.toObject(Workout::class.java)
+                workout?.apply { id = doc.id } }
         } catch (e: Exception) {
             null // Failed to retrieve workouts
         }

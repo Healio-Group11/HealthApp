@@ -1,12 +1,17 @@
 package com.example.healiohealthapplication.ui.screens.medicine
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,7 +26,7 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.TopNavBar
-import com.example.healiohealthapplication.data.models.Medicine
+import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 
 @Composable
 fun MedicineDetailScreen(
@@ -32,10 +37,21 @@ fun MedicineDetailScreen(
     amount: String,
     duration: String,
     navController: NavController,
-    viewModel: MedicineViewModel = hiltViewModel()
+    viewModel: MedicineViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel
 ) {
     // State to show confirmation dialog on delete
+    val userData by sharedViewModel.userData.collectAsState()
+    val userId by viewModel.userId.collectAsState()
+    val medicine by viewModel.medicine.collectAsState()
     val showDeleteDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(userData?.id) {
+        userData?.id?.let { id ->
+            viewModel.setUserId(id)
+            viewModel.getMedicineById(id, medicineId)
+        }
+    }
 
     if (showDeleteDialog.value) {
         AlertDialog(
@@ -80,65 +96,77 @@ fun MedicineDetailScreen(
                 .padding(16.dp),
             contentAlignment = Alignment.TopCenter
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Medicine Name
-                Text(
-                    text = medicineName,
-                    fontSize = 24.sp,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Medicine Icon with Circle Background
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .background(Color(0xFF3A75C4), shape = CircleShape)
+            medicine?.let { med ->
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.medicine),
-                        contentDescription = "Medicine Icon",
-                        modifier = Modifier.size(80.dp)
-                    )
-                }
+                    // Medicine Name
+                    item {
+                        Text(
+                            text = med.name,
+                            fontSize = 24.sp,
+                            color = Color.White
+                        )
+                    }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                // Details of Medicine
-                MedicineDescriptionCard(description)
-                MedicineDetailCard("Time & Schedule:", schedule)
-                MedicineDetailCard("Amount:", amount)
-                MedicineDetailCard("Duration:", duration)
+                    // Medicine Icon with Circle Background
+                    item {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(120.dp)
+                                .background(Color(0xFF3A75C4), shape = CircleShape)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.medicine),
+                                contentDescription = "Medicine Icon",
+                                modifier = Modifier.size(80.dp)
+                            )
+                        }
+                    }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                    item { Spacer(modifier = Modifier.height(24.dp)) }
 
-                // Edit Button
-                Button(
-                    onClick = {
-                        navController.navigate("edit_medicine/$medicineId") // Navigate to Edit screen
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text("Edit Medicine")
-                }
+                    // Details of Medicine
+                    item {
+                        MedicineDescriptionCard(med.description)
+                        MedicineDetailCard("Time & Schedule:", med.schedule)
+                        MedicineDetailCard("Amount:", med.amount)
+                        MedicineDetailCard("Duration:", med.duration)
+                    }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    item { Spacer(modifier = Modifier.height(32.dp)) }
 
-                // Delete Button
-                Button(
-                    onClick = {
-                        showDeleteDialog.value = true // Show confirmation dialog
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                ) {
-                    Text("Delete Medicine", color = Color.White)
+                    // Edit Button
+                    item {
+                        Button(
+                            onClick = {
+                                navController.navigate("edit_medicine/${userId}/$medicineId") // Navigate to Edit screen
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Edit Medicine")
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(8.dp)) }
+
+                    // Delete Button
+                    item {
+                        Button(
+                            onClick = {
+                                showDeleteDialog.value = true // Show confirmation dialog
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
+                            Text("Delete Medicine", color = Color.White)
+                        }
+                    }
                 }
             }
         }
