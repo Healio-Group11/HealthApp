@@ -29,8 +29,4 @@ class StepPrefs @Inject constructor(@ApplicationContext context: Context) {
     fun getStartUpBoolean(): Boolean {
         return stepsStorage.getBoolean("boolean", true)
     }
-
-    fun clear() {
-        stepsStorage.edit().clear().apply()
-    }
 }

@@ -47,6 +47,13 @@
     <string name="sign_up_screen_change_page_text">Already have an account?</string>
     <string name="sign_up_screen_change_page_link_text">Log in</string>
 
+    -- Steps Screen --
+    <string name="steps_top_nav_bar_title">Steps</string>
+    <string name="steps_screen_error_card_text">Step tracking isn\'t supported on this device.</string>
+    <string name="steps_screen_title_text">Today\'s steps</string>
+    <string name="steps_screen_outlined_text_field_label">Step Goal</string>
+    <string name="steps_screen_update_goal_button_text">Update Goal</string>
+
     -- Components --
     <string name="error_card_icon_description">Dismiss</string>
     <string name="next">Next</string>

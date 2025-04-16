@@ -19,9 +19,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.ErrorCard
@@ -31,7 +33,7 @@ import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 @Composable
 fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: StepsViewModel, sharedViewModel: SharedViewModel) {
     Scaffold(
-        topBar = { TopNavBar("Steps", navController) },
+        topBar = { TopNavBar(stringResource(R.string.steps_top_nav_bar_title), navController) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         val userData by sharedViewModel.userData.collectAsState()
@@ -47,21 +49,25 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
         }
 
         LazyColumn(
-            modifier = Modifier.padding(innerPadding).fillMaxSize().fillMaxSize().padding(horizontal = 16.dp),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!isSupported && viewModel.showError) {
                 item {
                     ErrorCard(
-                        errorMessage = "Step tracking isn't supported on this device.",
+                        errorMessage = stringResource(R.string.steps_screen_error_card_text),
                         onDismiss = { viewModel.showError = false }
                     )
                 }
             }
             item {
                 Text(
-                    text = "Today's steps",
+                    text = stringResource(R.string.steps_screen_title_text),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -91,14 +97,14 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
                 StepsOutlinedTextField(
                     value = viewModel.currentStepGoal,
                     onValueChange = { viewModel.currentStepGoal = it },
-                    label = "Step Goal",
+                    label = stringResource(R.string.steps_screen_outlined_text_field_label),
                     keyboardType = KeyboardType.Number,
                 )
             }
             item { Spacer(modifier = Modifier.height(12.dp)) }
             item {
                 BigButton(
-                    text = "Update Goal",
+                    text = stringResource(R.string.steps_screen_update_goal_button_text),
                     onClick = { viewModel.updateDailyStepGoal(userData?.id ?: "", viewModel.currentStepGoal ?: 0) }
                 )
             }
