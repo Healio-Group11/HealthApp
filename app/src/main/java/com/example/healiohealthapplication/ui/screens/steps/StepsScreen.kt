@@ -43,24 +43,27 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
         val progress by viewModel.progress.collectAsState()
         val isSupported by viewModel.isStepTrackingSupported.collectAsState()
         val hasPermission by viewModel.hasPermission.collectAsState()
+        val currentlyUsedSensor by viewModel.currentlyUsedSensor.collectAsState()
 
         LaunchedEffect(userData?.id) {
             userData?.id?.let { id ->
                 viewModel.userId = id
+                viewModel.checkStepPermission()
                 viewModel.getCurrentStepData(id)
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // contradicting errors here, fix
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             PermissionRequester(
                 permission = android.Manifest.permission.ACTIVITY_RECOGNITION,
-                shouldRequest = !hasPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q,
+                shouldRequest = !hasPermission && (currentlyUsedSensor == 1), // requests for permission if there is no granted permission and the step detector is used
                 onGranted = {
-                    viewModel.isStepTrackingSupported.value = true
+                    viewModel.setHasPermission(true)
+                    viewModel.callStartListening()
                     userData?.id?.let { viewModel.getCurrentStepData(it) }
                 },
                 onDenied = {
-                    viewModel.isStepTrackingSupported.value = false
+                    viewModel.setHasPermission(false)
                 }
             )
         }
@@ -69,16 +72,23 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!isSupported && viewModel.showError) {
+            if (!isSupported && viewModel.showNotSupportedError) {
                 item {
                     ErrorCard(
                         errorMessage = stringResource(R.string.steps_screen_error_card_text),
-                        onDismiss = { viewModel.showError = false }
+                        onDismiss = { viewModel.showNotSupportedError = false }
+                    )
+                }
+            }
+            if (!hasPermission && viewModel.showNoPermissionError) {
+                item {
+                    ErrorCard(
+                        errorMessage = "Permissions needed for step tracking",
+                        onDismiss = { viewModel.showNoPermissionError = false }
                     )
                 }
             }

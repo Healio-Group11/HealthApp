@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -41,7 +42,8 @@ class StepsViewModel @Inject constructor(
     private val _hasPermission = MutableStateFlow(false)
     val hasPermission: StateFlow<Boolean> = _hasPermission
 
-    var showError by mutableStateOf(true)
+    var showNotSupportedError by mutableStateOf(true)
+    var showNoPermissionError by mutableStateOf(true)
 
     // gets steps from the stepCounter and updates firestore using updateStepsTakenData
     private fun collectSteps() {
@@ -85,7 +87,11 @@ class StepsViewModel @Inject constructor(
                     stepPrefs.setLastStepCount(lastStepCount)
                     stepPrefs.setStartUpBoolean(false)
                 }
-                collectSteps()
+                val hasPermissionNow = hasPermission.value
+                Log.e("StepViewModel", "hasPermission in getCurrentStepData value: $hasPermissionNow")
+                if (hasPermissionNow) {
+                    collectSteps()
+                }
             } else {
                 initializeStepsData(userId)
             }
@@ -97,6 +103,18 @@ class StepsViewModel @Inject constructor(
         firestoreRepository.createStepsData(userId, dailyStepGoal) { success ->
             if (success) {
                 _stepsData.value = Steps(dailyStepsTaken = 0, dailyStepGoal = dailyStepGoal)
+                currentStepGoal = dailyStepGoal
+                val startUp = stepPrefs.getStartUpBoolean()
+                if (startUp) {
+                    lastStepCount = 0
+                    stepPrefs.setLastStepCount(lastStepCount)
+                    stepPrefs.setStartUpBoolean(false)
+                }
+                val hasPermissionNow = hasPermission.value
+                if (hasPermissionNow) {
+                    stepCounter.startListening()
+                    collectSteps()
+                }
             }
         }
     }
@@ -143,11 +161,20 @@ class StepsViewModel @Inject constructor(
     fun checkStepPermission() {
         val usingStepDetector = currentlyUsedSensor.value == 1
         _hasPermission.value = if (usingStepDetector) {
-            val granted = permissions.hasStepDetectorPermission()
-            if (!granted) stepCounter.isStepTrackingSupported.value = false
-            granted
+            Log.e("StepViewModel", "hasPermission value in checkStepPermission: ${permissions.hasStepDetectorPermission()}")
+            permissions.hasStepDetectorPermission()
         } else {
             true
         }
+    }
+
+    fun setHasPermission(granted: Boolean) {
+        Log.e("StepViewModel", "SET SET SET hasPermission value in setStepPermission: $granted")
+        _hasPermission.value = granted
+    }
+
+    fun callStartListening() {
+        Log.e("StepViewModel", "Start listening from viewmodel called!!!")
+        stepCounter.startListening()
     }
 }

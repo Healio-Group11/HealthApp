@@ -31,7 +31,8 @@ fun BigButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.background
         )
     }
 }

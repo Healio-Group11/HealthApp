@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.healiohealthapplication.data.remote.FoodApi
 import com.example.healiohealthapplication.data.remote.RetrofitInstance
 import com.example.healiohealthapplication.data.remote.RetrofitInstance.foodApi
+import com.example.healiohealthapplication.utils.Permissions
 import com.example.healiohealthapplication.utils.StepCounter
 import com.example.healiohealthapplication.utils.StepPrefs
 import dagger.Module
@@ -27,9 +28,10 @@ object AppModule {
     @Singleton
     fun provideStepCounter(
         @ApplicationContext context: Context,
-        stepPrefs: StepPrefs
+        stepPrefs: StepPrefs,
+        stepPermissions: Permissions
     ): StepCounter {
-        return StepCounter(context, stepPrefs)
+        return StepCounter(context, stepPrefs, stepPermissions)
     }
 
     @Singleton
