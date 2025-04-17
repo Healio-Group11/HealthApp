@@ -32,7 +32,7 @@ class StepCounter @Inject constructor(
 
     fun startListening() {
         stepPrefs.setStartUpBoolean(true)
-        if (stepDetector != null) { // (stepDetector == null)
+        if (stepDetector == null) {
             if (accelerometer != null) {
                 accelerometer?.let {
                     currentlyUsedSensor.value = 2
