@@ -25,8 +25,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.BottomNavBar
+import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
+import com.example.healiohealthapplication.ui.theme.Green142
 
 @Composable
 fun MedicineDetailScreen(
@@ -87,17 +89,18 @@ fun MedicineDetailScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF1E3A5F), Color(0xFF1E1E1E))
-                    )
-                )
                 .padding(innerPadding)
                 .padding(16.dp),
-            contentAlignment = Alignment.TopCenter
+            //contentAlignment = Alignment.TopCenter
         ) {
+            OverlappingCircle()
+
             medicine?.let { med ->
                 LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(top = 20.dp, start = 12.dp, end = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Medicine Name
@@ -105,19 +108,19 @@ fun MedicineDetailScreen(
                         Text(
                             text = med.name,
                             fontSize = 24.sp,
-                            color = Color.White
+                            color = Color.Black
                         )
                     }
 
                     item { Spacer(modifier = Modifier.height(16.dp)) }
 
                     // Medicine Icon with Circle Background
-                    item {
+                   item {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .size(120.dp)
-                                .background(Color(0xFF3A75C4), shape = CircleShape)
+                                .background(Green142, shape = CircleShape)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.medicine),
@@ -146,9 +149,10 @@ fun MedicineDetailScreen(
                                 navController.navigate("edit_medicine/${userId}/$medicineId") // Navigate to Edit screen
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Green142)
                         ) {
-                            Text("Edit Medicine")
+                            Text("Edit Medicine", color = Color.White, fontSize = 15.sp)
                         }
                     }
 
@@ -164,7 +168,7 @@ fun MedicineDetailScreen(
                             shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
-                            Text("Delete Medicine", color = Color.White)
+                            Text("Delete Medicine", color = Color.White, fontSize = 15.sp)
                         }
                     }
                 }
@@ -202,7 +206,7 @@ fun MedicineDescriptionCard(description: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF3A75C4)) // Blue background for contrast
+        colors = CardDefaults.cardColors(containerColor = Green142)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Description:", fontSize = 18.sp, color = Color.White)

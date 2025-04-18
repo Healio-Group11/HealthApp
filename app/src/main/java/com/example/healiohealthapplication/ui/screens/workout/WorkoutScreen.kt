@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.workout
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,19 +15,24 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.data.models.Workout
 import com.example.healiohealthapplication.ui.components.BottomNavBar
+import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
+import com.example.healiohealthapplication.ui.theme.Green142
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -54,55 +60,92 @@ fun WorkoutScreen(
         bottomBar = { BottomNavBar(navController) },
         containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Workout Tracker", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            OverlappingCircle()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(top = 60.dp, start = 16.dp, end = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "Workout Tracker",
+                    fontSize = 30.sp,
+                    color = Color.Black
+                )
 
-            // Show loading indicator
-            if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-
-            // Show error message if any
-            errorMessage?.let {
-                Text(it, color = Color.Red, modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-
-            // Display workouts only if userId is not null
-            userId?.let { uid ->
-                workouts.forEach { workout ->
-                    WorkoutCard(
-                        workout = workout,
-                        onEdit = { navController.navigate("edit_workout/$uid/${workout.id}/${workout.name}/${workout.duration}") },
-                        onDelete = {
-                            workoutViewModel.deleteWorkout(uid, workout.id) { success ->
-                                if (success) {
-                                    // Handle successful deletion
-                                }
-                            }
-                        }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(120.dp)
+                        .background(Green142, shape = CircleShape)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.workout),
+                        contentDescription = "Workout Icon",
+                        modifier = Modifier.size(80.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Button(
-                    onClick = { navController.navigate("add_workout/$uid") },
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
-                ) {
-                    Text("Add New Workout", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                // Show loading indicator
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
 
+                // Show error message if any
+                errorMessage?.let {
+                    Text(
+                        it,
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
 
-            } ?: run {
-                Text("Loading user data...", modifier = Modifier.align(Alignment.CenterHorizontally))
+                // Display workouts only if userId is not null
+                userId?.let { uid ->
+                    workouts.forEach { workout ->
+                        WorkoutCard(
+                            workout = workout,
+                            onEdit = { navController.navigate("edit_workout/$uid/${workout.id}/${workout.name}/${workout.duration}") },
+                            onDelete = {
+                                workoutViewModel.deleteWorkout(uid, workout.id) { success ->
+                                    if (success) {
+                                        // Handle successful deletion
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Button(
+                        onClick = { navController.navigate("add_workout/$uid") },
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Green142)
+                    ) {
+                        Text(
+                            "Add New Workout",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+
+
+                } ?: run {
+                    Text(
+                        "Loading user data...",
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }
@@ -179,11 +222,11 @@ fun WorkoutCard(workout: Workout, onEdit: () -> Unit, onDelete: () -> Unit) {
                             if (isTimerRunning) stopTimer() else startTimer() // Toggle start/pause
                         }
                         .background(
-                            color = Color(0xFF00796B),
+                            color = Green142,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .padding(horizontal = 24.dp, vertical = 12.dp),
-                    color = Color.Black,
+                    color = Color.White,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
