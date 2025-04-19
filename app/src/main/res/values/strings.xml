@@ -39,4 +39,5 @@
     -- Components
     <string name="error_card_icon_description">Dismiss</string>
     <string name="next">Next</string>
+    <string name="diet_screen_title">Diet</string>
 </resources>

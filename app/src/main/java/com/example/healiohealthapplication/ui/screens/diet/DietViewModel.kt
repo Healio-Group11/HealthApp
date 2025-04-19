@@ -1,18 +1,13 @@
 package com.example.healiohealthapplication.ui.screens.diet
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.healiohealthapplication.data.models.Diet
 import com.example.healiohealthapplication.data.repository.DietRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,34 +15,64 @@ class DietViewModel @Inject constructor(
     private val dietRepository: DietRepository
 ) : ViewModel() {
 
-    private val _diet = MutableStateFlow(Diet())
-    val diet: StateFlow<Diet> = _diet
+    // --- STATE: the Diet for the "current" date ---
+    private val _currentDiet = MutableStateFlow<Diet?>(null)
+    val currentDiet: StateFlow<Diet?> = _currentDiet.asStateFlow()
 
-    fun loadDietData(userId: String) {
+    // --- STATE: all Diet entries for the user ---
+    private val _allDiets = MutableStateFlow<Map<String, Diet>>(emptyMap())
+    val allDiets: StateFlow<Map<String, Diet>> = _allDiets.asStateFlow()
+
+    // --- Load the diet for a specific date (e.g. "2025-04-18") ---
+    fun loadDietForDate(userId: String, date: String = LocalDate.now().toString()) {
         viewModelScope.launch {
-            dietRepository.getDietData(userId) { data ->
-                data?.let {
-                    _diet.value = it
-                }
+            dietRepository.getDietForDate(userId, date) { diet ->
+                _currentDiet.value = diet ?: Diet(id = date)
             }
         }
     }
 
-    fun updateDiet(userId: String, updatedDiet: Diet) {
+    // --- Save or update the diet for a specific date ---
+    fun saveDietForDate(userId: String, date: String = LocalDate.now().toString(), updated: Diet) {
         viewModelScope.launch {
-            dietRepository.saveDietData(userId, updatedDiet) { success ->
+            dietRepository.saveDietForDate(userId, date, updated) { success ->
                 if (success) {
-                    _diet.value = updatedDiet
+                    _currentDiet.value = updated
+                    // also reflect in allDiets map
+                    _allDiets.update { map -> map + (date to updated) }
                 }
             }
         }
     }
 
-    // Optional: if you want to update only water intake
-    fun incrementWaterIntake(userId: String, amount: Int = 250) {
-        val current = _diet.value
-        val newDiet = current.copy(waterIntake = current.waterIntake + amount)
-        updateDiet(userId, newDiet)
+    // --- Load all diet entries for the user ---
+    fun loadAllDiets(userId: String) {
+        viewModelScope.launch {
+            dietRepository.getAllDietEntries(userId) { map ->
+                _allDiets.value = map
+            }
+        }
     }
 
+    // --- Delete the diet entry for a given date ---
+    fun deleteDietForDate(userId: String, date: String) {
+        viewModelScope.launch {
+            dietRepository.deleteDietForDate(userId, date) { success ->
+                if (success) {
+                    _allDiets.update { it - date }
+                    if (_currentDiet.value?.id == date) {
+                        _currentDiet.value = null
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Increment only waterIntake on the *current* date ---
+    fun incrementWaterIntake(amount: Int = 250, userId: String) {
+        val date = _currentDiet.value?.id ?: LocalDate.now().toString()
+        val current = _currentDiet.value ?: Diet(id = date)
+        val updated = current.copy(waterIntake = current.waterIntake + amount)
+        saveDietForDate(userId, date, updated)
+    }
 }
