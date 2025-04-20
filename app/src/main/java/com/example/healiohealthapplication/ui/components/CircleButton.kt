@@ -1,23 +1,25 @@
 package com.example.healiohealthapplication.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.healiohealthapplication.ui.theme.CircleButtonPink
-import com.example.healiohealthapplication.ui.theme.Green142
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+
+private val ButtonPink = Color(0xFFFFCDD2)
+private val BorderPink = Color(0xFFEF9A9A)
 
 @Composable
 fun CircleButton(
@@ -25,18 +27,23 @@ fun CircleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.size(120.dp),
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = CircleButtonPink)
+    Box(
+        modifier = modifier
+            .size(130.dp)
+            .shadow(elevation = 8.dp, shape = CircleShape)
+            .border(width = 2.dp, color = BorderPink, shape = CircleShape)
+            .background(color = ButtonPink, shape = CircleShape)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.Black,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = Color.Black,
+                fontSize = 24.sp,
+                //fontWeight = Bold
+            ),
+            textAlign = TextAlign.Center
         )
     }
 }
