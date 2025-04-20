@@ -33,7 +33,7 @@ import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 
 @Composable
-fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: StepsViewModel, sharedViewModel: SharedViewModel) {
+fun StepsScreen(navController: NavController, viewModel: StepsViewModel, sharedViewModel: SharedViewModel) {
     Scaffold(
         topBar = { TopNavBar(stringResource(R.string.steps_top_nav_bar_title), navController) },
         bottomBar = { BottomNavBar(navController) }
@@ -53,10 +53,10 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (!hasPermission && currentlyUsedSensor == 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             PermissionRequester(
                 permission = android.Manifest.permission.ACTIVITY_RECOGNITION,
-                shouldRequest = !hasPermission && (currentlyUsedSensor == 1), // requests for permission if there is no granted permission and the step detector is used
+                shouldRequest = true,
                 onGranted = {
                     viewModel.setHasPermission(true)
                     viewModel.callStartListening()
