@@ -14,14 +14,15 @@ import kotlin.math.sqrt
 // tracks steps using the accelerometer or android step counter sensor depending on what the phone has
 class StepCounter @Inject constructor(
     @ApplicationContext context: Context,
-    private val stepPrefs: StepPrefs
+    private val stepPrefs: StepPrefs,
+    private val stepPermissions: Permissions
 ) : SensorEventListener { // implements the sensor event listener (context is the way the sensor is accessed)
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var stepDetector: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     val stepCount = MutableStateFlow(0)
-    private val currentlyUsedSensor = MutableStateFlow(0) // 1 = step detector, 2 = accelerometer
+    val currentlyUsedSensor = MutableStateFlow(0) // 1 = step detector, 2 = accelerometer
     val isStepTrackingSupported = MutableStateFlow(true)
 
     private var previousMagnitude = 0f
@@ -43,11 +44,16 @@ class StepCounter @Inject constructor(
             }
         } else {
             currentlyUsedSensor.value = 1
-            stepDetector?.let { // only listens if there is a step detector in the phone
-                // "this" refers to the current stepCounter instance. this is where updates of listening are sent to
-                // "it" refers to the stepSensor which will be sending the updates
-                // "SensorManager.SENSOR_DELAY_UI determines how fast the updates are given
-                sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
+            val hasPermission = stepPermissions.hasStepDetectorPermission()
+            Log.e("StepCounter", "hasPermission value: $hasPermission") // comes as "false" even after being set to true
+            if (hasPermission) {
+                Log.e("StepCounter", "started listening to steps using step detector")
+                stepDetector?.let { // only listens if there is a step detector in the phone
+                    // "this" refers to the current stepCounter instance. this is where updates of listening are sent to
+                    // "it" refers to the stepSensor which will be sending the updates
+                    // "SensorManager.SENSOR_DELAY_UI determines how fast the updates are given
+                    sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healiohealthapplication.data.models.Steps
 import com.example.healiohealthapplication.data.repository.StepsRepository
+import com.example.healiohealthapplication.utils.Permissions
 import com.example.healiohealthapplication.utils.StepCounter
 import com.example.healiohealthapplication.utils.StepPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,9 +23,11 @@ import javax.inject.Inject
 class StepsViewModel @Inject constructor(
     private val firestoreRepository: StepsRepository,
     private val stepPrefs: StepPrefs,
-    private val stepCounter: StepCounter
+    private val stepCounter: StepCounter,
+    private val permissions: Permissions
 ) : ViewModel() {
     val isStepTrackingSupported = stepCounter.isStepTrackingSupported
+    val currentlyUsedSensor = stepCounter.currentlyUsedSensor
     var currentStepGoal by mutableStateOf<Int?>(0)
     private var lastStepCount = 0
     var userId: String? = null
@@ -35,7 +39,11 @@ class StepsViewModel @Inject constructor(
     private val _progress = MutableStateFlow(0f)
     val progress: StateFlow<Float> = _progress
 
-    var showError by mutableStateOf(true)
+    private val _hasPermission = MutableStateFlow(false)
+    val hasPermission: StateFlow<Boolean> = _hasPermission
+
+    var showNotSupportedError by mutableStateOf(true)
+    var showNoPermissionError by mutableStateOf(true)
 
     // gets steps from the stepCounter and updates firestore using updateStepsTakenData
     private fun collectSteps() {
@@ -79,7 +87,11 @@ class StepsViewModel @Inject constructor(
                     stepPrefs.setLastStepCount(lastStepCount)
                     stepPrefs.setStartUpBoolean(false)
                 }
-                collectSteps()
+                val hasPermissionNow = hasPermission.value
+                Log.e("StepViewModel", "hasPermission in getCurrentStepData value: $hasPermissionNow")
+                if (hasPermissionNow) {
+                    collectSteps()
+                }
             } else {
                 initializeStepsData(userId)
             }
@@ -91,6 +103,18 @@ class StepsViewModel @Inject constructor(
         firestoreRepository.createStepsData(userId, dailyStepGoal) { success ->
             if (success) {
                 _stepsData.value = Steps(dailyStepsTaken = 0, dailyStepGoal = dailyStepGoal)
+                currentStepGoal = dailyStepGoal
+                val startUp = stepPrefs.getStartUpBoolean()
+                if (startUp) {
+                    lastStepCount = 0
+                    stepPrefs.setLastStepCount(lastStepCount)
+                    stepPrefs.setStartUpBoolean(false)
+                }
+                val hasPermissionNow = hasPermission.value
+                if (hasPermissionNow) {
+                    stepCounter.startListening()
+                    collectSteps()
+                }
             }
         }
     }
@@ -132,5 +156,25 @@ class StepsViewModel @Inject constructor(
     private fun getTodayDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date())
+    }
+
+    fun checkStepPermission() {
+        val usingStepDetector = currentlyUsedSensor.value == 1
+        _hasPermission.value = if (usingStepDetector) {
+            Log.e("StepViewModel", "hasPermission value in checkStepPermission: ${permissions.hasStepDetectorPermission()}")
+            permissions.hasStepDetectorPermission()
+        } else {
+            true
+        }
+    }
+
+    fun setHasPermission(granted: Boolean) {
+        Log.e("StepViewModel", "SET SET SET hasPermission value in setStepPermission: $granted")
+        _hasPermission.value = granted
+    }
+
+    fun callStartListening() {
+        Log.e("StepViewModel", "Start listening from viewmodel called!!!")
+        stepCounter.startListening()
     }
 }

@@ -8,12 +8,12 @@ class StepPrefs @Inject constructor(@ApplicationContext context: Context) {
 
     private val stepsStorage = context.getSharedPreferences("step_prefs", Context.MODE_PRIVATE)
 
-    fun getLastResetDate(): String? {
-        return stepsStorage.getString("last_reset_date", null)
-    }
-
     fun setLastResetDate(date: String) {
         stepsStorage.edit().putString("last_reset_date", date).apply()
+    }
+
+    fun getLastResetDate(): String? {
+        return stepsStorage.getString("last_reset_date", null)
     }
 
     fun setLastStepCount(count: Int) {

@@ -76,7 +76,7 @@ fun HealioNavigation() {
         composable(route = Routes.DIET) { DietScreen(navController, modifier = Modifier, sharedViewModel) }
         composable(route = Routes.STEPS) {
             val stepsViewModel: StepsViewModel = hiltViewModel()
-            StepsScreen(navController, modifier = Modifier, stepsViewModel, sharedViewModel)
+            StepsScreen(navController, stepsViewModel, sharedViewModel)
         }
         // composable(route = Routes.WORKOUT) { WorkoutScreen(navController) }
         // composable(route = Routes.MEDICINE) { MedicineScreen(navController, modifier = Modifier) }

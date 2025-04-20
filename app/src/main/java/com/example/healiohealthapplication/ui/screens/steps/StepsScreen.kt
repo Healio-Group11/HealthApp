@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,11 +28,12 @@ import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.ErrorCard
+import com.example.healiohealthapplication.ui.components.PermissionRequester
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 
 @Composable
-fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: StepsViewModel, sharedViewModel: SharedViewModel) {
+fun StepsScreen(navController: NavController, viewModel: StepsViewModel, sharedViewModel: SharedViewModel) {
     Scaffold(
         topBar = { TopNavBar(stringResource(R.string.steps_top_nav_bar_title), navController) },
         bottomBar = { BottomNavBar(navController) }
@@ -40,28 +42,53 @@ fun StepsScreen(navController: NavController, modifier: Modifier, viewModel: Ste
         val stepsData by viewModel.stepsData.collectAsState()
         val progress by viewModel.progress.collectAsState()
         val isSupported by viewModel.isStepTrackingSupported.collectAsState()
+        val hasPermission by viewModel.hasPermission.collectAsState()
+        val currentlyUsedSensor by viewModel.currentlyUsedSensor.collectAsState()
 
         LaunchedEffect(userData?.id) {
             userData?.id?.let { id ->
                 viewModel.userId = id
+                viewModel.checkStepPermission()
                 viewModel.getCurrentStepData(id)
             }
+        }
+
+        if (!hasPermission && currentlyUsedSensor == 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            PermissionRequester(
+                permission = android.Manifest.permission.ACTIVITY_RECOGNITION,
+                shouldRequest = true,
+                onGranted = {
+                    viewModel.setHasPermission(true)
+                    viewModel.callStartListening()
+                    userData?.id?.let { viewModel.getCurrentStepData(it) }
+                },
+                onDenied = {
+                    viewModel.setHasPermission(false)
+                }
+            )
         }
 
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!isSupported && viewModel.showError) {
+            if (!isSupported && viewModel.showNotSupportedError) {
                 item {
                     ErrorCard(
                         errorMessage = stringResource(R.string.steps_screen_error_card_text),
-                        onDismiss = { viewModel.showError = false }
+                        onDismiss = { viewModel.showNotSupportedError = false }
+                    )
+                }
+            }
+            if (!hasPermission && viewModel.showNoPermissionError) {
+                item {
+                    ErrorCard(
+                        errorMessage = "Permissions needed for step tracking",
+                        onDismiss = { viewModel.showNoPermissionError = false }
                     )
                 }
             }
