@@ -142,12 +142,12 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // 1) Exercise circle
-                CircleButton("Exercise",
-                    onClick = {}
+                CircleButton("Workout",
+                    onClick = {navController.navigate(Routes.WORKOUT)}
                 )
 
                 // 2) Calorie intake circle
-                CircleButton("Calorie intake",
+                CircleButton("Diet",
                     onClick = { navController.navigate(Routes.DIET) }
                 )
             }
@@ -158,8 +158,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // 3) Water intake circle
-                CircleButton("Water intake",
-                    onClick = {},
+                CircleButton("Medicine",
+                    onClick = {navController.navigate(Routes.MEDICINE)},
                     modifier = Modifier
                 )
 
