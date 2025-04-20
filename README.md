@@ -4,12 +4,11 @@ Healio is a health tracking Android app built with Kotlin and Jetpack Compose. I
 
 ## Features
 - Step tracking using phone sensors (step detector or accelerometer fallback)
-- Water intake tracker
+- Water intake tracker with notification reminders
 - Calorie tracker
 - BMI calculator
 - Medicine logger
 - Exercise logger
-- A calendar for helpful reminders
 
 ## Project Structure
 ### Data/Repository/
