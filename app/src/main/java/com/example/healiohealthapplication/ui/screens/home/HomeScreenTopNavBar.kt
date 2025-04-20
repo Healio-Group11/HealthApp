@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.TopNavBarIconButton
+import com.example.healiohealthapplication.ui.theme.Green142
 
 // TODO: find out if the experimental parts should be switched to something else
 // TODO: change colours and make this prettier
@@ -27,7 +28,7 @@ fun HomeScreenTopNavBar(
 )  {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = Green142,
             titleContentColor = MaterialTheme.colorScheme.secondary
         ),
         title = { Text(text = title) },
