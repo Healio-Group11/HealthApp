@@ -1,10 +1,7 @@
 package com.example.healiohealthapplication.ui.screens.diet
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,45 +34,33 @@ import com.example.healiohealthapplication.ui.components.OverlappingCircle
 import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.Green142
 import androidx.compose.runtime.setValue
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.work.*
 import com.example.healiohealthapplication.data.models.Diet
 import com.example.healiohealthapplication.data.models.FoodProduct
 import com.example.healiohealthapplication.ui.components.BottomNavBar
+import com.example.healiohealthapplication.ui.components.PermissionRequester
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.ui.screens.food.FoodSearchViewModel
-import com.example.healiohealthapplication.worker.WaterReminderWorker
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
-import com.example.healiohealthapplication.ui.screens.diet.addFoodToDiet
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DietScreen(
     navController: NavController,
-    modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
     dietViewModel: DietViewModel = hiltViewModel(),
     foodSearchViewModel: FoodSearchViewModel = hiltViewModel()
@@ -93,8 +74,10 @@ fun DietScreen(
 
     Log.d("DietScreen", "UserData in DietScreen: $userData")
 
-    Log.d("userId", "User -> Id: ${userId}")
+    Log.d("userId", "User -> Id: $userId")
 
+    // UI state for permissions
+    val hasPermission by dietViewModel.hasPermission.collectAsState()
 
     // Local UI state for the search field and selected food
     var query by remember { mutableStateOf("") }
@@ -105,7 +88,21 @@ fun DietScreen(
     LaunchedEffect(userId) {
         if (userId != null) {
             dietViewModel.loadDietForDate(userId, today)
+            dietViewModel.checkNotificationPermission()
         }
+    }
+
+    if (!hasPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        PermissionRequester(
+            permission = android.Manifest.permission.POST_NOTIFICATIONS,
+            shouldRequest = true,
+            onGranted = {
+                dietViewModel.setHasNotificationPermission(true)
+            },
+            onDenied = {
+                dietViewModel.setHasNotificationPermission(false)
+            }
+        )
     }
 
     val dietForToday by dietViewModel.currentDiet.collectAsState()
@@ -259,7 +256,7 @@ fun DietScreen(
             Spacer(modifier = Modifier.height(spacerDp))
 
             // 4) Water Reminder Section
-            WaterReminderSection()
+            WaterReminderSection(dietViewModel)
 
             Spacer(modifier = Modifier.height(spacerDp))
 

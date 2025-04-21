@@ -12,24 +12,22 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.healiohealthapplication.R
+import com.example.healiohealthapplication.utils.Permissions
 
 class WaterReminderWorker(
     context: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
+    private val permissions: Permissions
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
         // Check for POST_NOTIFICATIONS permission
-        if (ActivityCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling ActivityCompat.requestPermissions in an Activity
-            // to request the missing permission.
-            return Result.failure()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = permissions.hasNotificationPermission()
+            if (!hasPermission) {
+                return Result.failure()
+            }
         }
-
         showNotification()
         return Result.success()
     }

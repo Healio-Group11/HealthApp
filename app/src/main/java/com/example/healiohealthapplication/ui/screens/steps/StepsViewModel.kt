@@ -1,6 +1,5 @@
 package com.example.healiohealthapplication.ui.screens.steps
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -88,7 +87,6 @@ class StepsViewModel @Inject constructor(
                     stepPrefs.setStartUpBoolean(false)
                 }
                 val hasPermissionNow = hasPermission.value
-                Log.e("StepViewModel", "hasPermission in getCurrentStepData value: $hasPermissionNow")
                 if (hasPermissionNow) {
                     collectSteps()
                 }
@@ -161,7 +159,6 @@ class StepsViewModel @Inject constructor(
     fun checkStepPermission() {
         val usingStepDetector = currentlyUsedSensor.value == 1
         _hasPermission.value = if (usingStepDetector) {
-            Log.e("StepViewModel", "hasPermission value in checkStepPermission: ${permissions.hasStepDetectorPermission()}")
             permissions.hasStepDetectorPermission()
         } else {
             true
@@ -169,12 +166,10 @@ class StepsViewModel @Inject constructor(
     }
 
     fun setHasPermission(granted: Boolean) {
-        Log.e("StepViewModel", "SET SET SET hasPermission value in setStepPermission: $granted")
         _hasPermission.value = granted
     }
 
     fun callStartListening() {
-        Log.e("StepViewModel", "Start listening from viewmodel called!!!")
         stepCounter.startListening()
     }
 }

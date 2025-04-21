@@ -1,6 +1,8 @@
 package com.example.healiohealthapplication.ui.screens.diet
 
 import android.content.Context
+import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,13 +40,17 @@ import androidx.compose.ui.unit.dp
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.healiohealthapplication.ui.components.PermissionRequester
 import com.example.healiohealthapplication.ui.theme.Green142
 import com.example.healiohealthapplication.worker.WaterReminderWorker
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun WaterReminderSection() {
+fun WaterReminderSection(dietViewModel: DietViewModel) {
     val context = LocalContext.current
+
+    // UI state for permissions
+    val hasPermission by dietViewModel.hasPermission.collectAsState()
 
     // Local states
     var reminderOn by remember { mutableStateOf(true) }
@@ -95,8 +102,17 @@ fun WaterReminderSection() {
                 }
                 // Switch, scaled up, with Green142 colors.
                 Switch(
-                    checked = reminderOn,
-                    onCheckedChange = { reminderOn = it },
+                    checked = reminderOn && hasPermission,
+                    onCheckedChange = { isChecked ->
+                        if (hasPermission) {
+                            reminderOn = isChecked
+                        } else {
+                            Log.w(
+                                "WaterReminder",
+                                "Notifications not allowed — can't turn on reminder."
+                            )
+                        }
+                    },
                     modifier = Modifier.scale(1.3f),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Green142,

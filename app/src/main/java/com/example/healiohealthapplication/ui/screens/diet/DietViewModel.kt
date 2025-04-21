@@ -1,9 +1,11 @@
 package com.example.healiohealthapplication.ui.screens.diet
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healiohealthapplication.data.models.Diet
 import com.example.healiohealthapplication.data.repository.DietRepository
+import com.example.healiohealthapplication.utils.Permissions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DietViewModel @Inject constructor(
-    private val dietRepository: DietRepository
+    private val dietRepository: DietRepository,
+    private val permissions: Permissions
 ) : ViewModel() {
 
     // --- STATE: the Diet for the "current" date ---
@@ -22,6 +25,10 @@ class DietViewModel @Inject constructor(
     // --- STATE: all Diet entries for the user ---
     private val _allDiets = MutableStateFlow<Map<String, Diet>>(emptyMap())
     val allDiets: StateFlow<Map<String, Diet>> = _allDiets.asStateFlow()
+
+    // -- STATE: permissions for notifications
+    private val _hasPermission = MutableStateFlow(false)
+    val hasPermission: StateFlow<Boolean> = _hasPermission
 
     // --- Load the diet for a specific date (e.g. "2025-04-18") ---
     fun loadDietForDate(userId: String, date: String = LocalDate.now().toString()) {
@@ -74,5 +81,16 @@ class DietViewModel @Inject constructor(
         val current = _currentDiet.value ?: Diet(id = date)
         val updated = current.copy(waterIntake = current.waterIntake + amount)
         saveDietForDate(userId, date, updated)
+    }
+
+    fun checkNotificationPermission() {
+        Log.e("DietViewModel","Checking for notification permission from phone")
+        _hasPermission.value = permissions.hasNotificationPermission()
+        Log.e("DietViewModel","Notification permission from check set to: ${_hasPermission.value}")
+    }
+
+    fun setHasNotificationPermission(granted: Boolean) {
+        Log.e("DietViewModel","setting notification permission to $granted with setter" )
+        _hasPermission.value = granted
     }
 }
