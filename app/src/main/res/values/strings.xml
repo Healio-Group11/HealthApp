@@ -4,6 +4,11 @@
     -- Regular nav bar --
     <string name="top_nav_bar_icon_description">Arrow back icon</string>
 
+    -- Bottom nav bar --
+    <string name="bottom_nav_bar_first_tab_text">Home</string>
+    <string name="bottom_nav_bar_second_tab_text">Medicine</string>
+    <string name="bottom_nav_bar_third_tab_text">Profile</string>
+
     -- Start screen --
     <string name="stay_fit_stay_healthy">Stay fit, Stay healthy!</string>
     <string name="get_started">Get started</string>
@@ -36,7 +41,7 @@
     <string name="edit_user_screen_gender_dropdown_component_label">gender</string>
     <string name="edit_user_screen_gender_dropdown_component_icon_description">arrow down icon for select gender</string>
 
-    -- Sign Up Screen --
+    -- Sign up screen --
     <string name="sign_up_screen_title">Let\'s help you meet your goal</string>
     <string name="sign_up_screen_outlined_text_field_label_email">Email</string>
     <string name="sign_up_screen_outlined_text_field_label_password">Password</string>
@@ -47,7 +52,7 @@
     <string name="sign_up_screen_change_page_text">Already have an account?</string>
     <string name="sign_up_screen_change_page_link_text">Log in</string>
 
-    -- Steps Screen --
+    -- Steps screen --
     <string name="steps_top_nav_bar_title">Steps</string>
     <string name="steps_screen_error_card_text">Step tracking isn\'t supported on this device.</string>
     <string name="steps_screen_title_text">Today\'s steps</string>

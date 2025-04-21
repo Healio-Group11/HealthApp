@@ -8,9 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
+import com.example.healiohealthapplication.ui.theme.NavBarTextWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +24,10 @@ fun TopNavBar(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
-        title = { Text(text = title) },
+        title = { Text(
+            text = title,
+            color = NavBarTextWhite
+        ) },
         navigationIcon = {
             TopNavBarIconButton(
                 contentDescription = R.string.top_nav_bar_icon_description,

@@ -37,4 +37,3 @@ Healio is a health tracking Android app built with Kotlin and Jetpack Compose. I
 
 ### Utils/
 - Utility classes not tied to UI.
-

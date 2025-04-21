@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
-import com.example.healiohealthapplication.ui.screens.calendar.CalendarScreen
 import com.example.healiohealthapplication.ui.screens.diet.DietScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreen
 import com.example.healiohealthapplication.ui.screens.home.HomeScreenViewModel
@@ -80,7 +79,6 @@ fun HealioNavigation() {
         }
         // composable(route = Routes.WORKOUT) { WorkoutScreen(navController) }
         // composable(route = Routes.MEDICINE) { MedicineScreen(navController, modifier = Modifier) }
-        composable(route = Routes.CALENDAR) { CalendarScreen(navController, modifier = Modifier) }
         composable(route = Routes.WELCOME) { WelcomeScreen(navController, modifier = Modifier) }
 
         // Workouts Screen

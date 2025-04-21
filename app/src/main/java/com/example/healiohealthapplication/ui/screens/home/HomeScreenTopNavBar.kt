@@ -15,9 +15,8 @@ import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.TopNavBarIconButton
 import com.example.healiohealthapplication.ui.theme.Green142
+import com.example.healiohealthapplication.ui.theme.NavBarTextWhite
 
-// TODO: find out if the experimental parts should be switched to something else
-// TODO: change colours and make this prettier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenTopNavBar(
@@ -31,7 +30,10 @@ fun HomeScreenTopNavBar(
             containerColor = Green142,
             titleContentColor = MaterialTheme.colorScheme.secondary
         ),
-        title = { Text(text = title) },
+        title = { Text(
+            text = title,
+            color = NavBarTextWhite
+        ) },
         actions = {
             TopNavBarIconButton(
                 contentDescription = R.string.home_screen_top_nav_bar_icon_description,
@@ -57,10 +59,6 @@ fun HomeScreenTopNavBar(
                 ItemForDropdownMenu(
                     textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_diet,
                     onClick = { navController.navigate(Routes.DIET) }
-                )
-                ItemForDropdownMenu(
-                    textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_calendar,
-                    onClick = { navController.navigate(Routes.CALENDAR) }
                 )
                 ItemForDropdownMenu(
                     textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_user,
