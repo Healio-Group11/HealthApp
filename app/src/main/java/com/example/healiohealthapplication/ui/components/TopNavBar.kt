@@ -10,6 +10,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
+import com.example.healiohealthapplication.ui.theme.Green142
 import com.example.healiohealthapplication.ui.theme.NavBarTextWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +22,7 @@ fun TopNavBar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = Green142,
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = { Text(

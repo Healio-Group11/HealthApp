@@ -17,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.data.models.BottomNavTabItem
 import com.example.healiohealthapplication.navigation.Routes
+import com.example.healiohealthapplication.ui.theme.Green142
 import com.example.healiohealthapplication.ui.theme.NavBarTextWhite
 
 @Composable
@@ -29,7 +30,7 @@ fun BottomNavBar(navController: NavController) {
         BottomNavTabItem(stringResource(R.string.bottom_nav_bar_third_tab_text), Icons.Filled.Face, route = Routes.USER)
     )
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary
+        containerColor = Green142
     ) {
         tabs.forEach { tab ->
             val selected = tab.route === backStackEntry.value?.destination?.route
