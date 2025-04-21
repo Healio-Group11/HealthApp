@@ -38,109 +38,50 @@ fun WelcomeScreen(
   navController: NavController,
   modifier: Modifier
 ) {
-    // A vertical layout for the entire screen
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        // 1) TOP SECTION
-        Box(
+        // Main content column
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            OverlappingCircle();
-
-            // Healio logo
-            // TODO: Need to fix the image
             Image(
                 painter = painterResource(id = R.drawable.ic_dancing_woman_healio_text),
-                contentDescription = "Dancing woman with Healio text",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(top = 30.dp)
-                    .fillMaxHeight(0.6f),
+                contentDescription = stringResource(id = R.string.fitness_illustration_desc),
+                modifier = Modifier.size(200.dp),
                 contentScale = ContentScale.Fit
             )
-        }
 
-        // 2) MIDDLE SECTION
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            // Large circle behind phone & icons
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(0.8f)
-                    .background(
-                        color = Green142,
-                        shape = CircleShape
-                    )
-            )
+            Spacer(modifier = Modifier.height(48.dp))
 
-            // Phone + icons illustration
-            // TODO: Need to fix the image
-            Image(
-                painter = painterResource(id = R.drawable.ic_phone_and_icons),
-                contentDescription = "Phone with icons",
-                modifier = Modifier
-                    .fillMaxWidth(0.8f),
-                contentScale = ContentScale.Fit
-            )
-        }
-
-        // 3) BOTTOM SECTION
-        // "Welcome to our app" text bubble
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(80.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        color = Color(0xFFEFEFEF),
-                        shape = RoundedCornerShape(20.dp)
-                    )
-            )
             Text(
-                text = "Welcome to our app",
-                style = MaterialTheme.typography.headlineSmall.copy(color = Color.Black)
+                text = stringResource(id = R.string.welcome),
+                style = MaterialTheme.typography.headlineMedium,
             )
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
-        // Bottom illustration
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            contentAlignment = Alignment.Center
-        ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_feeling_happy_bhy8),
-                contentDescription = "Woman with balloon",
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 16.dp),
+                contentDescription = stringResource(id = R.string.fitness_illustration_desc),
+                modifier = Modifier.size(200.dp),
                 contentScale = ContentScale.Fit
             )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            BigButton(
+                text = stringResource(id = R.string.next),
+                onClick = { navController.navigate(Routes.HOME) }
+            )
+
+            Spacer(modifier = Modifier.height(96.dp))
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
-
-        BigButton(
-            text = stringResource(id = R.string.next),
-            onClick = { navController.navigate(Routes.HOME) }
-        )
+        OverlappingCircle();
     }
 }
