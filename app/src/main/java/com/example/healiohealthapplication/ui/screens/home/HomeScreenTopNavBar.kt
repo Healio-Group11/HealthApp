@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DropdownMenu
@@ -9,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.healiohealthapplication.R
@@ -42,7 +44,8 @@ fun HomeScreenTopNavBar(
             )
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { toggleExpanded(false) }
+                onDismissRequest = { toggleExpanded(false) },
+                modifier = Modifier.background(MaterialTheme.colorScheme.tertiary)
             ) {
                 ItemForDropdownMenu(
                     textResId = R.string.home_screen_top_nav_bar_dropdown_text_for_workout,
