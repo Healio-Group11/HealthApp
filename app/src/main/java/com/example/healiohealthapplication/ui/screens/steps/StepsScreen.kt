@@ -95,7 +95,7 @@ fun StepsScreen(navController: NavController, viewModel: StepsViewModel, sharedV
             item {
                 Text(
                     text = stringResource(R.string.steps_screen_title_text),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             item { Spacer(modifier = Modifier.height(34.dp)) }
@@ -104,7 +104,8 @@ fun StepsScreen(navController: NavController, viewModel: StepsViewModel, sharedV
                     CircularProgressIndicator(
                         progress = { progress },
                         modifier = Modifier.fillMaxSize(),
-                        strokeWidth = 10.dp
+                        strokeWidth = 10.dp,
+                        trackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.6f)
                     )
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(

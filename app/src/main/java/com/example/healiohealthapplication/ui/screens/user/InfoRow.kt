@@ -19,11 +19,11 @@ fun InfoRow(label: String, value: String) {
         Text(
             text = "$label:",
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.titleMedium
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.titleMedium
         )
     }
 }

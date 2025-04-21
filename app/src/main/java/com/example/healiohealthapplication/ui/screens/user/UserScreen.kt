@@ -36,14 +36,14 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel, sharedVie
         floatingActionButton = { userData?.let { UniqueFloatingActionButton(navController = navController, route = Routes.EDIT_USER, icon = Icons.Filled.Edit, contentDescription = "Edit button") } }
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding).fillMaxSize().fillMaxSize().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.padding(innerPadding).fillMaxSize().padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 Text(
                     text = stringResource(R.string.user_screen_title),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }

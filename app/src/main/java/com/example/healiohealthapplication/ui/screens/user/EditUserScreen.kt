@@ -44,13 +44,13 @@ fun EditUserScreen(navController: NavController, viewModel: UserViewModel, share
         }
         LazyColumn(
             modifier = Modifier.padding(innerPadding).fillMaxSize().fillMaxSize().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 Text(
                     text = stringResource(R.string.edit_user_screen_title),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
