@@ -100,7 +100,7 @@ fun MedicineDetailScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(top = 20.dp, start = 12.dp, end = 12.dp),
+                        .padding(top = 70.dp, start = 12.dp, end = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Medicine Name

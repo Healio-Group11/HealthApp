@@ -3,6 +3,7 @@ package com.example.healiohealthapplication.ui.screens.workout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -50,7 +51,7 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                 .padding(innerPadding)
         ) {
             OverlappingCircle()
-            Column(
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -58,9 +59,9 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("New Workout", fontSize = 30.sp, color = Color.Black)
+                item { Text("New Workout", fontSize = 30.sp, color = Color.Black) }
 
-                Box(
+                item { Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(120.dp)
@@ -71,10 +72,11 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                         contentDescription = "Workout Icon",
                         modifier = Modifier.size(80.dp)
                     )
-                }
+                } }
+
 
                 // Input for workout name
-                TextField(
+                item { TextField(
                     value = workoutName,
                     onValueChange = { workoutName = it },
                     label = { Text("Workout Name") },
@@ -86,10 +88,11 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                         focusedIndicatorColor = Color(0xFF80CBC4),
                         unfocusedIndicatorColor = Color.Gray
                     )
-                )
+                ) }
+
 
                 // Input for workout duration
-                TextField(
+                item { TextField(
                     value = workoutDuration,
                     onValueChange = { workoutDuration = it },
                     label = { Text("Workout Duration (e.g., 30 min)") },
@@ -101,12 +104,13 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                         focusedIndicatorColor = Color(0xFF80CBC4),
                         unfocusedIndicatorColor = Color.Gray
                     )
-                )
+                ) }
+
 
                 // Save button
-                Spacer(modifier = Modifier.height(16.dp))
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                Button(
+                item { Button(
                     onClick = {
                         if (userId.isNotEmpty()) {
                             val newWorkout = Workout(
@@ -150,7 +154,8 @@ fun AddWorkoutScreen(navController: NavController, userId: String) {
                     colors = ButtonDefaults.buttonColors(containerColor = Green142)
                 ) {
                     Text("Save Workout", color = Color.White, fontSize = 15.sp)
-                }
+                } }
+
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,18 +62,18 @@ fun MedicineScreen(navController: NavController, viewModel: MedicineViewModel = 
         ) {
             OverlappingCircle()
 
-            Column(
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(top = 80.dp, start = 16.dp, end = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Medicine Reminder!", fontSize = 20.sp, color = Color.Black)
+                item { Text("Medicine Reminder!", fontSize = 20.sp, color = Color.Black) }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                Box(
+                item { Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(120.dp)
@@ -83,15 +84,15 @@ fun MedicineScreen(navController: NavController, viewModel: MedicineViewModel = 
                         contentDescription = "Medicine Icon",
                         modifier = Modifier.size(80.dp)
                     )
-                }
+                } }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                if (medicines.isEmpty()) {
+                item { if (medicines.isEmpty()) {
                     Text("No medicines added yet.", color = Color.White)
                 } else {
                     MedicineListContent(medicines, navController)
-                }
+                } }
             }
         }
     }
@@ -102,7 +103,7 @@ fun MedicineListContent(medicines: List<Medicine>, navController: NavController)
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            //.verticalScroll(rememberScrollState())
     ) {
         medicines.forEach { medicine ->
             Card(

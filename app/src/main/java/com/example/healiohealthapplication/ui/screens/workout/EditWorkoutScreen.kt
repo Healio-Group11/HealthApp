@@ -3,6 +3,7 @@ package com.example.healiohealthapplication.ui.screens.workout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,7 +46,7 @@ fun EditWorkoutScreen(
                 .padding(innerPadding)
         ) {
             OverlappingCircle()
-            Column(
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -53,9 +54,9 @@ fun EditWorkoutScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Edit Workout", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                item { Text("Edit Workout", fontSize = 24.sp, fontWeight = FontWeight.Bold) }
 
-                Box(
+                item { Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(120.dp)
@@ -66,26 +67,27 @@ fun EditWorkoutScreen(
                         contentDescription = "Workout Icon",
                         modifier = Modifier.size(80.dp)
                     )
-                }
+                } }
+
 
                 // TextField for workout name
-                OutlinedTextField(
+                item { OutlinedTextField(
                     value = updatedWorkoutName,
                     onValueChange = { updatedWorkoutName = it },
                     label = { Text("Workout Name") },
                     modifier = Modifier.fillMaxWidth()
-                )
+                ) }
 
                 // TextField for workout duration
-                OutlinedTextField(
+                item { OutlinedTextField(
                     value = updatedDuration,
                     onValueChange = { updatedDuration = it },
                     label = { Text("Workout Duration (minutes)") },
                     modifier = Modifier.fillMaxWidth()
-                )
+                ) }
 
                 // Save Button
-                Button(
+                item { Button(
                     onClick = {
                         isSaving = true
                         val updatedWorkout = Workout(updatedWorkoutName, updatedDuration)
@@ -115,10 +117,11 @@ fun EditWorkoutScreen(
                             color = Color.White
                         )
                     }
-                }
+                } }
+
 
                 // Cancel Button
-                Button(
+                item { Button(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
@@ -129,7 +132,8 @@ fun EditWorkoutScreen(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
-                }
+                } }
+
             }
         }
     }

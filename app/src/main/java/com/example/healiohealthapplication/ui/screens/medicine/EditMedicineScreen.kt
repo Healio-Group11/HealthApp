@@ -2,8 +2,11 @@ package com.example.healiohealthapplication.ui.screens.medicine
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.ui.components.BottomNavBar
 import com.example.healiohealthapplication.ui.components.TopNavBar
 import com.example.healiohealthapplication.data.models.Medicine
@@ -71,12 +76,28 @@ fun EditMedicineScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(innerPadding)
-                        .padding(top = 20.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 80.dp, start = 16.dp, end = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item { Text("Edit Medicine", fontSize = 20.sp, color = Color.Black) }
 
                     item { Spacer(modifier = Modifier.height(16.dp)) }
+
+                    item { Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .background(Green142, shape = CircleShape)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.medicine),
+                            contentDescription = "Medicine Icon",
+                            modifier = Modifier.size(80.dp)
+                        )
+                    }
+
+                        Spacer(modifier = Modifier.height(16.dp)) }
+
                     // Edit Fields using the renamed MedicineInputField
                     item { EditMedicineInputField(
                         label = "Medicine Name",
