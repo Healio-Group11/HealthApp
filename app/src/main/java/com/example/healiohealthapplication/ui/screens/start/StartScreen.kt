@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,7 +38,7 @@ fun StartScreen(
     Box(modifier = Modifier.fillMaxSize()) {
 
         // Main content column
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
@@ -45,30 +46,36 @@ fun StartScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.fitness_tracker_y5q5),
-                contentDescription = stringResource(id = R.string.fitness_illustration_desc),
-                modifier = Modifier.size(200.dp),
-                contentScale = ContentScale.Fit
-            )
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.fitness_tracker_y5q5),
+                    contentDescription = stringResource(id = R.string.fitness_illustration_desc),
+                    modifier = Modifier.size(200.dp),
+                    contentScale = ContentScale.Fit
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
-            Text(
-                text = stringResource(id = R.string.stay_fit_stay_healthy),
-                style = MaterialTheme.typography.headlineMedium,
-            )
+            item {
+                Text(
+                    text = stringResource(id = R.string.stay_fit_stay_healthy),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
-            BigButton(
-                text = stringResource(id = R.string.get_started),
-                onClick = { navController.navigate(Routes.LOGIN) }
-                // For testing the Diet screen
-                //onClick = { navController.navigate(Routes.DIET) }
-                // For testing the Welcome screen
-                //onClick = { navController.navigate(Routes.WELCOME) }
-            )
+            item {
+                BigButton(
+                    text = stringResource(id = R.string.get_started),
+                    onClick = { navController.navigate(Routes.LOGIN) }
+                    // For testing the Diet screen
+                    //onClick = { navController.navigate(Routes.DIET) }
+                    // For testing the Welcome screen
+                    //onClick = { navController.navigate(Routes.WELCOME) }
+                )
+            }
         }
 
         OverlappingCircle();

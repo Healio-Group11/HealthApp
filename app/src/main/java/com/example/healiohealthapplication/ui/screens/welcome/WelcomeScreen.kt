@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +42,7 @@ fun WelcomeScreen(
     Box(modifier = Modifier.fillMaxSize()) {
 
         // Main content column
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
@@ -49,37 +50,45 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_dancing_woman_healio_text),
-                contentDescription = stringResource(id = R.string.fitness_illustration_desc),
-                modifier = Modifier.size(200.dp),
-                contentScale = ContentScale.Fit
-            )
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_dancing_woman_healio_text),
+                    contentDescription = stringResource(id = R.string.fitness_illustration_desc),
+                    modifier = Modifier.size(200.dp),
+                    contentScale = ContentScale.Fit
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
-            Text(
-                text = stringResource(id = R.string.welcome),
-                style = MaterialTheme.typography.headlineMedium,
-            )
+            item {
+                Text(
+                    text = stringResource(id = R.string.welcome),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_feeling_happy_bhy8),
-                contentDescription = stringResource(id = R.string.fitness_illustration_desc),
-                modifier = Modifier.size(200.dp),
-                contentScale = ContentScale.Fit
-            )
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_feeling_happy_bhy8),
+                    contentDescription = stringResource(id = R.string.fitness_illustration_desc),
+                    modifier = Modifier.size(200.dp),
+                    contentScale = ContentScale.Fit
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
-            BigButton(
-                text = stringResource(id = R.string.next),
-                onClick = { navController.navigate(Routes.HOME) }
-            )
+            item {
+                BigButton(
+                    text = stringResource(id = R.string.next),
+                    onClick = { navController.navigate(Routes.HOME) }
+                )
 
-            Spacer(modifier = Modifier.height(96.dp))
+                Spacer(modifier = Modifier.height(96.dp))
+            }
         }
 
         OverlappingCircle();

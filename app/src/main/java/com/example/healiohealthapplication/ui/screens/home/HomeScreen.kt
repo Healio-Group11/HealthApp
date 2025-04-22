@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -68,101 +69,109 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
             OverlappingCircle()
         }
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(120.dp))
+            item {
+                Spacer(modifier = Modifier.height(120.dp))
 
-            // Title: "Today's step"
-            Text(
-                text = "Today's step",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.Black
-                ),
-                modifier = Modifier.padding(top = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Row: dog-walking illustration + circle with "100"
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Placeholder image: person walking dog
-                Image(
-                    painter = painterResource(id = R.drawable.ic_walking_with_dog), // replace with your resource
-                    contentDescription = "Walking dog illustration",
-                    modifier = Modifier
-                        .size(120.dp),
-                    contentScale = ContentScale.Fit
+                // Title: "Today's step"
+                Text(
+                    text = "Today's step",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        color = Color.Black
+                    ),
+                    modifier = Modifier.padding(top = 16.dp)
                 )
 
-                Spacer(modifier = Modifier.width(36.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-                // Pink circle for "100"
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .border(
-                            width = 2.dp,
-                            color = Green142,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
+            item {
+                // Row: dog-walking illustration + circle with "100"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "0",// steps?.dailyStepsTaken.toString(),
-                        style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
+                    // Placeholder image: person walking dog
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_walking_with_dog), // replace with your resource
+                        contentDescription = "Walking dog illustration",
+                        modifier = Modifier
+                            .size(120.dp),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    Spacer(modifier = Modifier.width(36.dp))
+
+                    // Pink circle for "100"
+                    Box(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .border(
+                                width = 2.dp,
+                                color = Green142,
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "0",// steps?.dailyStepsTaken.toString(),
+                            style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(36.dp))
+            }
+
+            item {
+                // Title: "Today's activities"
+                Text(
+                    text = "Today's activities",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        color = Color.Black
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(36.dp))
+            }
+
+            item {
+                // Row (or FlowRow) for the three activity circles
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 1) Exercise circle
+                    CircleButton("Workout",
+                        onClick = {navController.navigate(Routes.WORKOUT)}
+                    )
+
+                    // 2) Calorie intake circle
+                    CircleButton("Diet",
+                        onClick = { navController.navigate(Routes.DIET) }
                     )
                 }
-            }
+                // Row (or FlowRow) for the three activity circles
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 3) Water intake circle
+                    CircleButton("Medicine",
+                        onClick = {navController.navigate(Routes.MEDICINE)},
+                        modifier = Modifier
+                    )
 
-            Spacer(modifier = Modifier.height(36.dp))
-
-            // Title: "Today's activities"
-            Text(
-                text = "Today's activities",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.Black
-                )
-            )
-
-            Spacer(modifier = Modifier.height(36.dp))
-
-            // Row (or FlowRow) for the three activity circles
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 1) Exercise circle
-                CircleButton("Workout",
-                    onClick = {navController.navigate(Routes.WORKOUT)}
-                )
-
-                // 2) Calorie intake circle
-                CircleButton("Diet",
-                    onClick = { navController.navigate(Routes.DIET) }
-                )
-            }
-            // Row (or FlowRow) for the three activity circles
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 3) Water intake circle
-                CircleButton("Medicine",
-                    onClick = {navController.navigate(Routes.MEDICINE)},
-                    modifier = Modifier
-                )
-
+                }
             }
         }
     }
