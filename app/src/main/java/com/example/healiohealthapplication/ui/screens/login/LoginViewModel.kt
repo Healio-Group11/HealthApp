@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(
                 authRepository.getCurrentUserId()?.let { userId ->
                     onLoginSuccess(userId)
                     navController.navigate(Routes.WELCOME)
-                        stepCounter.startListening()
+                    stepCounter.startListening()
                 }
             } else {
                 errorMessage = error ?: "Registration failed."

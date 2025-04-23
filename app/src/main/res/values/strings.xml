@@ -52,6 +52,17 @@
     <string name="sign_up_screen_change_page_text">Already have an account?</string>
     <string name="sign_up_screen_change_page_link_text">Log in</string>
 
+    -- Login screen --
+    <string name="login_screen_title">Welcome back!</string>
+    <string name="login_screen_outlined_text_field_label_email">Email</string>
+    <string name="login_screen_outlined_text_field_label_password">Password</string>
+    <string name="login_screen_outlined_text_field_icon_description_email">description</string>
+    <string name="login_screen_outlined_text_field_icon_description_password">description</string>
+    <string name="login_screen_error_card_in_case_of_null_error_message">Unknown error occurred.</string>
+    <string name="login_screen_submit_button_text">Log In</string>
+    <string name="login_screen_change_page_text_normal">Don\'t have an account?</string>
+    <string name="login_screen_change_page_text_link">Sign up</string>
+
     -- Steps screen --
     <string name="steps_top_nav_bar_title">Steps</string>
     <string name="steps_screen_error_card_text">Step tracking isn\'t supported on this device.</string>

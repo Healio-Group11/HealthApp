@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.healiohealthapplication.R
 import com.example.healiohealthapplication.navigation.Routes
 import com.example.healiohealthapplication.ui.components.BigButton
 import com.example.healiohealthapplication.ui.components.ChangePageText
@@ -29,13 +31,17 @@ import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel, sharedViewModel: SharedViewModel) {
     Scaffold { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding).fillMaxSize().fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 Text(
-                    text = "Welcome back!",
+                    text = stringResource(R.string.login_screen_title),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -44,27 +50,27 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel, sharedV
                 LoginAndSignUpOutlinedTextField(
                     value = viewModel.currentEmail,
                     onValueChange = { viewModel.currentEmail = it },
-                    label = "Email",
+                    label = stringResource(R.string.login_screen_outlined_text_field_label_email),
                     keyboardType = KeyboardType.Email,
                     leadingIcon = Icons.Filled.Email,
-                    iconContentDescription = "description"
+                    iconContentDescription = stringResource(R.string.login_screen_outlined_text_field_icon_description_email)
                 )
             }
             item {
                 LoginAndSignUpOutlinedTextField(
                     value = viewModel.currentPassword,
                     onValueChange = { viewModel.currentPassword = it },
-                    label = "Password",
+                    label = stringResource(R.string.login_screen_outlined_text_field_label_password),
                     keyboardType = KeyboardType.Password,
                     isPassword = true,
                     leadingIcon = Icons.Filled.Lock,
-                    iconContentDescription = "description"
+                    iconContentDescription = stringResource(R.string.login_screen_outlined_text_field_icon_description_password)
                 )
             }
             item {
                 viewModel.showError.takeIf { it }?.let {
                     ErrorCard(
-                        errorMessage = viewModel.errorMessage ?: "Unknown error occurred.",
+                        errorMessage = viewModel.errorMessage ?: stringResource(R.string.login_screen_error_card_in_case_of_null_error_message),
                         onDismiss = { viewModel.showError = false }
                     )
                 }
@@ -72,7 +78,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel, sharedV
             item { Spacer(modifier = Modifier.height(34.dp)) }
             item {
                 BigButton(
-                    text = "Log In",
+                    text = stringResource(R.string.login_screen_submit_button_text),
                     onClick = {
                         viewModel.login(
                             navController,
@@ -87,8 +93,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel, sharedV
             item { Spacer(modifier = Modifier.height(20.dp)) }
             item {
                 ChangePageText(
-                    text = "Don't have an account?",
-                    linkText = "Sign up"
+                    text = stringResource(R.string.login_screen_change_page_text_normal),
+                    linkText = stringResource(R.string.login_screen_change_page_text_link)
                 ) { navController.navigate(Routes.SIGNUP) }
             }
         }
