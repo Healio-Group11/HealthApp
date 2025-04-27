@@ -1,5 +1,6 @@
 package com.example.healiohealthapplication.ui.screens.food
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healiohealthapplication.data.models.FoodProduct
@@ -20,7 +21,10 @@ class FoodSearchViewModel @Inject constructor(
 
     fun searchFood(foodName: String) {
         viewModelScope.launch {
-            _foodResults.value = foodRepository.searchFood(foodName)
+            val results = foodRepository.searchFood(foodName)
+            Log.d("FoodSearchViewModel", "Search results: $results")
+            _foodResults.value = results
+            //_foodResults.value = foodRepository.searchFood(foodName)
         }
     }
 }

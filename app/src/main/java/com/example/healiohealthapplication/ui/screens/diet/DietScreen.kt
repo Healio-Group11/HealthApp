@@ -142,7 +142,9 @@ fun DietScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(36.dp))
+            }
 
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -170,7 +172,9 @@ fun DietScreen(
 
             item {
                 Spacer(modifier = Modifier.height(spacerDp))
+            }
 
+            item {
                 // 2) "Today" Title
                 Text(
                     text = "Today",
@@ -194,7 +198,8 @@ fun DietScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
-                        value = if (selectedFood != null) selectedFood!!.productName ?: query else query,
+                        value = if (selectedFood != null) selectedFood!!.productName
+                            ?: query else query,
                         onValueChange = { newValue ->
                             query = newValue
                             // Clear previous selection if text changes
@@ -234,33 +239,28 @@ fun DietScreen(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(spacerDp))
+            }
+
                 // --- End of Input Row ---
 
-                // Show suggestions if query is not empty and no selection has been made
-                if (query.length >= 3 && selectedFood == null) {
-                    Spacer(modifier = Modifier.height(spacerDp))
-                    LazyColumn(
+            // Show suggestions if query is not empty and no selection has been made
+            if (query.length >= 3 && selectedFood == null) {
+                Log.d("DietScreen", " All Rendering suggestion: ${foodResults}")
+                items(items = foodResults) { food ->
+                    Log.d("DietScreen", "Rendering suggestion: ${food.productName}")
+                    Text(
+                        text = food.productName ?: "Unknown",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = 0.dp, max = 300.dp)
-                    ) {
-                        items(items = foodResults) { food ->
-                            Text(
-                                text = food.productName ?: "Unknown",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        // Set the selected food and update text field accordingly
-                                        selectedFood = food
-                                        query = food.productName ?: ""
-                                    }
-                                    .padding(vertical = 8.dp)
-                            )
-                        }
-                    }
+                            .clickable {
+                                // Set the selected food and update text field accordingly
+                                selectedFood = food
+                                query = food.productName ?: ""
+                            }
+                            .padding(vertical = 8.dp)
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(spacerDp))
             }
 
             item {

@@ -5,11 +5,12 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface FoodApi {
-    @GET("cgi/search.pl")
+    @GET("search")
     suspend fun searchFood(
-        @Query("search_terms") foodName: String,
-        @Query("search_simple") searchSimple: Int = 1,
-        @Query("action") action: String = "process",
-        @Query("json") json: Int = 1
+        @Query("categories_tags_en") category: String? = null,
+        @Query("labels_tags_en") labels: String? = null,
+        @Query("fields") fields: String = "code,product_name,brands,nutriments",
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
     ): FoodSearchResponse
 }
