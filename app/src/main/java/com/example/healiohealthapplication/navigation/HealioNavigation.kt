@@ -54,7 +54,7 @@ fun HealioNavigation() {
         composable(route = Routes.START) { StartScreen(navController, modifier = Modifier) }
         composable(route = Routes.HOME) {
             val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
-            HomeScreen(navController, modifier = Modifier, homeScreenViewModel, sharedViewModel)
+            HomeScreen(navController, homeScreenViewModel, sharedViewModel)
         }
         composable(route = Routes.LOGIN) {
             val loginScreenViewModel: LoginViewModel = hiltViewModel()

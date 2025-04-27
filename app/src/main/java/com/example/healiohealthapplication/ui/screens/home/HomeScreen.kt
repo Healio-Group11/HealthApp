@@ -38,28 +38,19 @@ import com.example.healiohealthapplication.ui.screens.shared.SharedViewModel
 import com.example.healiohealthapplication.ui.theme.Green142
 
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: HomeScreenViewModel, sharedViewModel: SharedViewModel) {
+fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel, sharedViewModel: SharedViewModel) {
     Scaffold(
         topBar = { HomeScreenTopNavBar("Home", navController, viewModel.expanded, { viewModel.toggleExpanded() }, viewModel = viewModel) },
         bottomBar = { BottomNavBar(navController) }
 
     ) { innerPadding ->
         // CollectAsState automatically observes changes.
-        // Apparently this does not break MVVM architecture! TODO: check whether this is true and that we can use this in UI
         val userData by sharedViewModel.userData.collectAsState()
-        // val steps by viewModel.stepCount.collectAsState()
+        val steps by viewModel.stepCount.collectAsState()
 
         LaunchedEffect(userData?.id) {
-           //  userData?.id?.let { viewModel.loadSteps(it) }
+           userData?.id?.let { viewModel.loadSteps(it) }
         }
-
-        /*Column(
-            modifier = Modifier.padding(innerPadding).fillMaxSize()
-        ) {
-            Text(
-                text = "Currently logged in user's email: ${userData?.email ?: "Not logged in"}!"
-            )
-        }*/
 
         Column(
             modifier = Modifier
@@ -121,7 +112,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier, viewModel: Home
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "0",// steps?.dailyStepsTaken.toString(),
+                            text = (steps?.dailyStepsTaken ?: 0).toString(),
                             style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black)
                         )
                     }
